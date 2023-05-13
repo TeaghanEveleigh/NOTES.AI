@@ -30,11 +30,11 @@ app.use((req, res, next) => {
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
-let posts=[];
+
 let postToRender=0;
 
 app.get("/", function(req,res){
-  res.render("home",{posts: posts})
+  res.render("home",{posts: req.session.posts})
   console.log(posts)
 
 })
@@ -79,7 +79,7 @@ app.post("/compose", function(req, res){
           }
       });
   } else {
-      posts.push(post);
+      req.session.posts.push(post);
       res.redirect("/");
   }
 });
@@ -93,7 +93,7 @@ app.get("/post/:title",function(req,res) {
   let title= req.params.title;
   console.log(title);
  
-  posts.forEach(element => {
+  req.session.posts.forEach(element => {
 
       if(element.title===title){
         res.render("post",{title:element.title,date :element.date,content:element.content});
