@@ -3,20 +3,21 @@
     <h1>Your Notes</h1>
 
     <div id="posts-container">
+        <div class="plus-button">
+            <a href="/compose">+</a>
+        </div>
         <% posts.slice().reverse().forEach(element => { %>
             <!-- Individual Post -->
             <div class="post">
                 <h2 class="post-title"><%= element.title %></h2>
-                <p class="post-text"><%= element.content.slice(0,40) %></p>
+                <p class="post-text"><%= element.content.slice(0,35) %></p>
                 <a href="/post/<%=element.title%>" class="read-more">Read More</a>
                 <p class="post-date"><%=element.date%></p>
             </div>
         <%  });  %>
 
         <!-- Plus Button -->
-        <div class="plus-button">
-            <a href="/compose">+</a>
-        </div>
+       
     </div>
     
     

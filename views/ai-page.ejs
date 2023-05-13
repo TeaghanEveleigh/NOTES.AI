@@ -1,16 +1,17 @@
 <%- include("partials/header") %>
-
 <body>
     <h1>Edit AI-Generated Content</h1>
-    
-    <form action="/save-ai-content" method="post">
+    <form action="/compose" method="post">
         <div class="mb-3">
-            <label for="aiContentInput" class="form-label">AI Content</label>
-            <input type="text" name="aiContent" id="aiContentInput" value="<%= aiContent %>">
+            <label for="exampleFormControlInput1" class="form-label">Title</label>
+            <input type="text" name="titleOfPost" autocomplete="off" class="form-control" id="exampleFormControlInput1" value="<%=title%>">
         </div>
-        <button class="btn btn-primary" type="submit">Save</button>
+        <div class="mb-3">
+            <label for="exampleFormControlTextarea1" class="form-label">post</label>
+            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="contentOfPost" autocomplete="off"><%= generatedText %></textarea>
+        </div>
+        <button class="btn btn-primary mt-5" type="submit" name="action" value="create">Create</button>
     </form>
 
+    <%- include("partials/footer") %>
 </body>
-
-<%- include("partials/footer") %>

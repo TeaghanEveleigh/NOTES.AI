@@ -52,16 +52,15 @@ app.post("/compose", function(req, res){
 
   if (req.body.action === 'generate_ai') {
       console.log("WE ARE USING AI");
-      generateText(post.content+"please wrap any code in <code></code>", function(err, generatedText) {
+      generateText(post.content, function(err, generatedText) {
           if (err) {
               console.error(err);
               // Handle error, possibly send a response indicating an error occurred
               res.status(500).send("An error occurred while generating text.");
           } else {
-            console.log(generateText);
-              post.content = generatedText;
-              posts.push(post);
-              res.redirect("/");
+            console.log(generatedText);
+            post.content = generatedText;
+            res.render("ai-page", {title:post.title, generatedText: post.content }); // Replace "your-template" with your actual EJS template name
           }
       });
   } else {
