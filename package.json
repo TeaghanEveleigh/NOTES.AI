@@ -1,7 +1,7 @@
 {
   "name": "ejs-challenge",
   "version": "1.0.0",
-  "description": "",
+  "description": "NOTES.AI is a powerful web application that leverages artificial intelligence to generate user notes based on text input. It uses EJS for templating, MongoDB for data storage, and is hosted on Heroku.",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
@@ -15,5 +15,7 @@
     "ejs": "^2.6.1",
     "express": "^4.16.3",
     "lodash": "^4.17.11"
-  }
+  },
+  "devDependencies": {},
+  "keywords": []
 }
