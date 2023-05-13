@@ -35,7 +35,7 @@ let postToRender=0;
 
 app.get("/", function(req,res){
   res.render("home",{posts: req.session.posts})
-  console.log(posts)
+
 
 })
 
