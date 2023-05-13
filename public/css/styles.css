@@ -17,15 +17,6 @@
    
     
 }
-h1{
-  margin-left: 30px;
-}
-p{
-  margin-left: 35px;
-}
-h2{
-  margin-left: 35px;
-}
 
 .footer-padding {
 	padding-bottom: 60px;
@@ -235,6 +226,9 @@ button{
         text-align: center;
         margin-left: none;
     }
+}
+.titleofpage{
+  margin-left: 35px!important;
 }
   
   
