@@ -1,4 +1,5 @@
 //jshint esversion:6
+const session = require('express-session');
 const generateText = require('./modules/gptAi');
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -11,6 +12,20 @@ const contactContent = "Scelerisque eleifend donec pretium vulputate sapien. Rho
 const app = express();
 
 app.set('view engine', 'ejs');
+app.use(session({
+  secret: 'peopleeat8Apples',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false } // Note: A secure cookie requires an HTTPS connection
+}))
+
+// Use middleware to populate posts for each request if not already present
+app.use((req, res, next) => {
+  if (!req.session.posts) {
+    req.session.posts = [];
+  }
+  next();
+});
 
 
 app.use(bodyParser.urlencoded({extended: true}));
