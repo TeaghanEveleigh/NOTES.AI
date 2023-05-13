@@ -12,7 +12,10 @@
     letter-spacing: 5px;
 }
 .navbar-nav  li a:hover {
-    color: #ac6fcd !important;
+    color: #7059f2 !important;
+    background: rgb(77, 77, 192);
+   
+    
 }
 
 .footer-padding {
@@ -57,11 +60,14 @@ button{
   }
   
   .post-text {
-    margin-bottom: 10px; /* Your desired margin */
+    margin-bottom: 10px;
+    border: 1px solid black;
+        padding: 5px;
+        border-radius: 5px; /* Your desired margin */
   }
   
   .read-more {
-    color: blue; /* Your desired link color */
+    color: #4449d0; /* Your desired link color */
     text-decoration: none;
   }
   
@@ -91,7 +97,7 @@ button{
   /* Hover effect for the post and plus button */
   .post:hover, .plus-button:hover {
     transform: scale(1.05) translateY(-10px); /* Zooms the box and moves it up */
-    border-bottom: 3px solid blue; 
+    border-bottom: 4px solid #4449d0; 
     overflow: hidden;/* Changes the bottom border to blue */
   }
   
@@ -170,4 +176,32 @@ button{
     font-size: 25px;
     color: #4449d0;
   }
+  .navbar-nav li a {
+    position: relative;
+    color: #000;
+    text-decoration: none;
+  }
+  
+  .navbar-nav li a::after {
+    content: '';
+    display: block;
+    width: 0;
+    height: 2px;
+    background: blue;
+    transition: width .3s, left .3s;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+  }
+  
+  .navbar-nav li a:hover::after {
+    width: 100%;
+    left: 0;
+  }
+  
+  .navbar-nav li a:not(:hover)::after {
+    transition: 0s;
+  }
+  
+  
  

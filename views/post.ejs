@@ -1,12 +1,9 @@
-<%-include("partials/header")-%>
+<%- include("partials/header") -%>
 
 <body>
-<h1>TITLE: <%=title%></h1>
-<h2 class="date"><%=date%></h2>
-<p><%=content%></p>
-
-
-
+    <h1>TITLE: <%= title %></h1>
+    <h2 class="date"><%= date %></h2>
+    <p><%- content.replace(/\n/g, '<br>').replace(/<code>(.*?)<\/code>/g, '<code>$1</code>') %></p>
 </body>
 
-<%-include("partials/footer")-%>
+<%- include("partials/footer") -%>

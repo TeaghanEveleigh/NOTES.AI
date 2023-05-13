@@ -1,0 +1,16 @@
+<%- include("partials/header") %>
+
+<body>
+    <h1>Edit AI-Generated Content</h1>
+    
+    <form action="/save-ai-content" method="post">
+        <div class="mb-3">
+            <label for="aiContentInput" class="form-label">AI Content</label>
+            <input type="text" name="aiContent" id="aiContentInput" value="<%= aiContent %>">
+        </div>
+        <button class="btn btn-primary" type="submit">Save</button>
+    </form>
+
+</body>
+
+<%- include("partials/footer") %>

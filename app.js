@@ -1,5 +1,5 @@
 //jshint esversion:6
-
+const generateText = require('./modules/gptAi');
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
@@ -11,6 +11,7 @@ const contactContent = "Scelerisque eleifend donec pretium vulputate sapien. Rho
 const app = express();
 
 app.set('view engine', 'ejs');
+
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
@@ -38,21 +39,41 @@ app.get("/compose",function(req,res){
 
 
 })
-app.post("/compose",function(req,res){
+app.post("/compose", function(req, res){
   let date = new Date();
+  let options = { weekday: 'short', day: 'numeric', month: 'long' };
+  let formattedDate = date.toLocaleDateString('en-US', options);
 
-let options = { weekday: 'short', day: 'numeric', month: 'long' };
+  let post = {
+      title: req.body.titleOfPost,
+      content: req.body.contentOfPost,
+      date: formattedDate
+  };
 
-let formattedDate = date.toLocaleDateString('en-US', options);
+  if (req.body.action === 'generate_ai') {
+      console.log("WE ARE USING AI");
+      generateText(post.content+"please wrap any code in <code></code>", function(err, generatedText) {
+          if (err) {
+              console.error(err);
+              // Handle error, possibly send a response indicating an error occurred
+              res.status(500).send("An error occurred while generating text.");
+          } else {
+            console.log(generateText);
+              post.content = generatedText;
+              posts.push(post);
+              res.redirect("/");
+          }
+      });
+  } else {
+      posts.push(post);
+      res.redirect("/");
+  }
+});
 
-      let post ={ title:req.body.titleOfPost, 
-        content:req.body.contentOfPost,
-        date:formattedDate
-      }
-  
-    posts.push(post);
-    res.redirect("/");
-})
+
+
+
+
 app.get("/post/:title",function(req,res) {
   
   let title= req.params.title;
@@ -66,6 +87,7 @@ app.get("/post/:title",function(req,res) {
       }
   });
 });
+
 
 
 
