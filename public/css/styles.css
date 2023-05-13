@@ -17,6 +17,15 @@
    
     
 }
+h1{
+  margin-left: 30px;
+}
+p{
+  margin-left: 35px;
+}
+h2{
+  margin-left: 35px;
+}
 
 .footer-padding {
 	padding-bottom: 60px;
@@ -42,7 +51,8 @@ button{
 #posts-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 20px; /* Adjust the gap between posts */
+    gap: 20px;
+    padding-left: 20px; /* Adjust the gap between posts */
   }
   
   .post, .plus-button {
@@ -56,7 +66,8 @@ button{
   
   .post-title {
     font-size: 24px; /* Your desired font size */
-    margin-bottom: 10px; /* Your desired margin */
+    margin-bottom: 10px
+    ; /* Your desired margin */
   }
   
   .post-text {
@@ -202,14 +213,28 @@ button{
   .navbar-nav li a:not(:hover)::after {
     transition: 0s;
   }
-  .full-width-form {
-    width: 100%;
-}
+  @media (max-width: 767px) {
+    .post {
+        text-align: center;
+    }
 
-.full-width-input {
-    width: 100%;
-    height: 50vh;
-    box-sizing: border-box;
+    .post-title {
+        text-align: center;
+    }
+
+    #posts-container {
+        align-items: center;
+        margin-left: 30px;
+    }
+
+    .plus-button {
+        align-self: center;
+    }
+
+    h1 {
+        text-align: center;
+        margin-left: none;
+    }
 }
   
   
