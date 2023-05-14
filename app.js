@@ -66,7 +66,8 @@ app.post("/compose", function(req, res) {
   let post = {
     title: req.body.titleOfPost,
     content: req.body.contentOfPost,
-    date: formattedDate
+    date: formattedDate,
+    prompt:req.body.Prompt
   };
 
   // Validation
@@ -76,14 +77,14 @@ app.post("/compose", function(req, res) {
 
   if (req.body.action === 'generate_ai') {
     console.log("WE ARE USING AI");
-    generateText(post.content, function(err, generatedText) {
+    generateText(post.prompt, function(err, generatedText) {
       if (err) {
         console.error(err);
         res.status(500).send("An error occurred while generating text.");
       } else {
         console.log(generatedText);
-        post.content = generatedText;
-        res.render("ai-page", { title: post.title, generatedText: post.content });
+        post.prompt = generatedText;
+        res.render("ai-page", { title: post.title, generatedText: post.content+post.prompt });
       }
     });
   } else {
