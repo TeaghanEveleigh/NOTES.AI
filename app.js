@@ -41,10 +41,16 @@ app.use(express.static("public"));
 let postToRender=0;
 
 app.get("/", function(req,res){
-  res.render("home",{posts: req.session.posts})
+  if (req.session.userId) {
+    res.render("home",{posts: req.session.posts})
+  } else {
+    res.redirect('/login');
+  }
+  
 
 
 })
+
 
 app.get("/about",function(req,res){
   res.render("about",{content : aboutContent})
@@ -146,4 +152,91 @@ app.listen(port, function() {
 
 
 //show dps shows your databaases
+const bcrypt = require('bcrypt');
+
+// Render the login page
+app.get('/login', (req, res) => {
+  res.render('login');
+});
+
+// Handle login form submission
+app.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+  
+  try {
+    // Find the user by email
+    const user = await User.findOne({ email });
+
+    // Check if the user exists
+    if (!user) {
+      return res.render('login');
+    }
+
+    // Compare the provided password with the stored password
+    const passwordMatch = await bcrypt.compare(password, user.password);
+
+    // Check if the passwords match
+    if (!passwordMatch) {
+      return res.render('login');
+    }
+
+    // Store the user ID in the session
+    req.session.userId = user._id;
+
+    // Redirect to the dashboard or desired page
+    res.redirect('/');
+  } catch (err) {
+    console.log(err);
+    res.status(500).render('login');
+  }
+});
+
+// Render the signup page
+app.get('/signup', (req, res) => {
+  res.render('signup');
+});
+
+// Handle signup form submission
+app.post('/signup', async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    // Check if the user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.render('signup');
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create a new user
+    const newUser = new User({ email, password: hashedPassword });
+    await newUser.save();
+
+    // Store the user ID in the session
+    req.session.userId = newUser._id;
+
+    // Redirect to the dashboard or desired page
+    res.redirect('/');
+  } catch (err) {
+    console.log(err);
+    res.status(500).render('signup');
+  }
+});
+
+// Render the dashboard page
+
+
+// Logout route
+app.get('/logout', (req, res) => {
+  // Clear the session data
+  req.session.destroy((err) => {
+    if (err) {
+      console.log(err);
+    }
+    res.redirect('/login');
+  });
+});
+
 
