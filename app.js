@@ -4,7 +4,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const mongoose = require('mongoose');
-const User = require('./models/user'); // Import the User model or replace it with your own
+const User = require('./models/user');
+const note = require('./models/note') // Import the User model or replace it with your own
 
 const app = express();
 
@@ -45,7 +46,7 @@ app.get("/compose", function(req, res){
   res.render("compose");
 });
 
-app.post("/compose", function(req, res){
+app.post("/compose", function(req, res) {
   let date = new Date();
   let options = { weekday: 'short', day: 'numeric', month: 'long' };
   let formattedDate = date.toLocaleDateString('en-US', options);
@@ -70,11 +71,29 @@ app.post("/compose", function(req, res){
       }
     });
   } else {
-    req.session.posts.push(post);
-    req.session.User.posts.push(post);
-    res.redirect("/");
+    const userId = req.session.userId; // Get the user ID from the session
+
+    User.findById(userId, function(err, user) {
+      if (err) {
+        console.error(err);
+        // Handle error, possibly send a response indicating an error occurred
+        res.status(500).send("An error occurred while finding the user.");
+      } else {
+        user.posts.push(post); // Push the post to the user's posts array
+        user.save(function(err) {
+          if (err) {
+            console.error(err);
+            // Handle error, possibly send a response indicating an error occurred
+            res.status(500).send("An error occurred while saving the user.");
+          } else {
+            res.redirect("/");
+          }
+        });
+      }
+    });
   }
 });
+
 
 app.get("/post/:title", function(req, res) {
   let title = req.params.title;
