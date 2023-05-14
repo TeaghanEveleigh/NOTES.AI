@@ -265,7 +265,7 @@ button{
 
 /* Show the text on hover */
 .icon:hover .icon-text {
-  transform: translateX(-10px) translateY(-50%); /* Move the text to the left, adjust as needed */
+  transform: translateY(-50%); /* Move the text to the left, adjust as needed */
   opacity: 1; /* Make the text visible */
 }
 
