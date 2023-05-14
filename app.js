@@ -71,8 +71,9 @@ app.post("/compose", function(req, res) {
   };
 
   // Validation
-  if (!post.title || !post.content) {
-    return res.status(400).send('Invalid post data');
+  if (!post.title || !post.content&&!post.prompt) {
+    //return res.status(400).send('Invalid post data');
+    res.redirect("/compose");
   }
 
   if (req.body.action === 'generate_ai') {
