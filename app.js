@@ -57,12 +57,16 @@ app.post("/compose", function(req, res) {
     date: formattedDate
   };
 
+  // Validation
+  if (!post.title || !post.content) {
+    return res.status(400).send('Invalid post data');
+  }
+
   if (req.body.action === 'generate_ai') {
     console.log("WE ARE USING AI");
     generateText(post.content, function(err, generatedText) {
       if (err) {
         console.error(err);
-        // Handle error, possibly send a response indicating an error occurred
         res.status(500).send("An error occurred while generating text.");
       } else {
         console.log(generatedText);
@@ -71,7 +75,12 @@ app.post("/compose", function(req, res) {
       }
     });
   } else {
-    const userId = req.session.userId; // Get the user ID from the session
+    // Check if session exists and has userId
+    if (!req.session || !req.session.userId) {
+      return res.status(401).send('Unauthorized');
+    }
+
+    const userId = req.session.userId;
 
     // Create a new note
     const newNote = new Note({
@@ -80,29 +89,30 @@ app.post("/compose", function(req, res) {
       date: post.date
     });
 
-    newNote.save(function(err, savedNote) {
-      if (err) {
-        console.error(err);
-        res.status(500).send("An error occurred while saving the note.");
-      } else {
-        // After saving the note, find the user and update their posts
-        User.findById(userId, function(err, user) {
-          if (err) {
-            console.error(err);
-            res.status(500).send("An error occurred while finding the user.");
-          } else {
-            user.posts.push(savedNote._id); // Push the saved note's id to the user's posts array
-            user.save(function(err) {
-              if (err) {
-                console.error(err);
-                res.status(500).send("An error occurred while saving the user.");
-              } else {
-                res.redirect("/");
-              }
-            });
-          }
-        });
+    newNote.save()
+    .then(savedNote => {
+      if (!savedNote) {
+        throw new Error('Failed to save note');
       }
+      // Update user
+      return User.findById(userId);
+    })
+    .then(user => {
+      if (!user) {
+        throw new Error('User not found');
+      }
+      user.posts.push(savedNote._id);
+      return user.save();
+    })
+    .then(user => {
+      if (!user) {
+        throw new Error('Failed to update user');
+      }
+      res.redirect("/");
+    })
+    .catch(err => {
+      console.error(err);
+      res.status(500).send("An error occurred.");
     });
   }
 });
