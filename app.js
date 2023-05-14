@@ -73,20 +73,33 @@ app.post("/compose", function(req, res) {
   } else {
     const userId = req.session.userId; // Get the user ID from the session
 
-    User.findById(userId, function(err, user) {
+    // Create a new note
+    const newNote = new Note({
+      user: userId,
+      content: post.content,
+      date: post.date
+    });
+
+    newNote.save(function(err, savedNote) {
       if (err) {
         console.error(err);
-        // Handle error, possibly send a response indicating an error occurred
-        res.status(500).send("An error occurred while finding the user.");
+        res.status(500).send("An error occurred while saving the note.");
       } else {
-        user.posts.push(post); // Push the post to the user's posts array
-        user.save(function(err) {
+        // After saving the note, find the user and update their posts
+        User.findById(userId, function(err, user) {
           if (err) {
             console.error(err);
-            // Handle error, possibly send a response indicating an error occurred
-            res.status(500).send("An error occurred while saving the user.");
+            res.status(500).send("An error occurred while finding the user.");
           } else {
-            res.redirect("/");
+            user.posts.push(savedNote._id); // Push the saved note's id to the user's posts array
+            user.save(function(err) {
+              if (err) {
+                console.error(err);
+                res.status(500).send("An error occurred while saving the user.");
+              } else {
+                res.redirect("/");
+              }
+            });
           }
         });
       }
