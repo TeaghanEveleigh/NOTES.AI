@@ -90,30 +90,30 @@ app.post("/compose", function(req, res) {
     });
 
     newNote.save()
-    .then(savedNote => {
-      if (!savedNote) {
-        throw new Error('Failed to save note');
-      }
-      // Update user
-      return { user: User.findById(userId), savedNote };
-    })
-    .then(data => {
-      if (!data.user) {
-        throw new Error('User not found');
-      }
-      data.user.posts.push(data.savedNote._id);
-      return data.user.save();
-    })
-    .then(user => {
-      if (!user) {
-        throw new Error('Failed to update user');
-      }
-      res.redirect("/");
-    })
-    .catch(err => {
-      console.error(err);
-      res.status(500).send("An error occurred.");
-    });
+  .then(savedNote => {
+    if (!savedNote) {
+      throw new Error('Failed to save note');
+    }
+    // Retrieve the user
+    return User.findById(userId).exec().then(user => ({user, savedNote}));
+  })
+  .then(data => {
+    if (!data.user) {
+      throw new Error('User not found');
+    }
+    data.user.posts.push(data.savedNote._id);
+    return data.user.save();
+  })
+  .then(user => {
+    if (!user) {
+      throw new Error('Failed to update user');
+    }
+    res.redirect("/");
+  })
+  .catch(err => {
+    console.error(err);
+    res.status(500).send("An error occurred.");
+  });
   }
 });
 
