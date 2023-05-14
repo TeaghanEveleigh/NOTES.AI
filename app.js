@@ -4,7 +4,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const mongoose = require('mongoose');
-const User = require('./models/user'); // Import the User model or replace it with your own
+const User = require('./models/user');
+const Note = require('./models/note'); // Import the User model or replace it with your own
 
 const app = express();
 
@@ -45,16 +46,16 @@ app.get("/compose", function(req, res){
   res.render("compose");
 });
 
-app.post("/compose", function(req, res){
+app.post("/compose", function(req, res) {
   let date = new Date();
   let options = { weekday: 'short', day: 'numeric', month: 'long' };
   let formattedDate = date.toLocaleDateString('en-US', options);
 
-  let post = {
-    title: req.body.titleOfPost,
+  let post = new Note({
+    user: req.user._id, // Assuming you have the user information stored in req.user
     content: req.body.contentOfPost,
     date: formattedDate
-  };
+  });
 
   if (req.body.action === 'generate_ai') {
     console.log("WE ARE USING AI");
@@ -66,12 +67,39 @@ app.post("/compose", function(req, res){
       } else {
         console.log(generatedText);
         post.content = generatedText;
-        res.render("ai-page", { title: post.title, generatedText: post.content });
+        post.save(function(err) {
+          if (err) {
+            console.error(err);
+            // Handle error, possibly send a response indicating an error occurred
+            res.status(500).send("An error occurred while saving the note.");
+          } else {
+            res.render("ai-page", { title: post.title, generatedText: post.content });
+          }
+        });
       }
     });
   } else {
-    req.session.posts.push(post);
-    res.redirect("/");
+    post.save(function(err) {
+      if (err) {
+        console.error(err);
+        // Handle error, possibly send a response indicating an error occurred
+        res.status(500).send("An error occurred while saving the note.");
+      } else {
+        User.findByIdAndUpdate(
+          req.user._id,
+          { $push: { posts: post._id } },
+          function(err) {
+            if (err) {
+              console.error(err);
+              // Handle error, possibly send a response indicating an error occurred
+              res.status(500).send("An error occurred while associating the note with the user.");
+            } else {
+              res.redirect("/");
+            }
+          }
+        );
+      }
+    });
   }
 });
 
@@ -79,12 +107,25 @@ app.get("/post/:title", function(req, res) {
   let title = req.params.title;
   console.log(title);
 
-  req.session.posts.forEach(element => {
-    if (element.title === title) {
-      res.render("post", { title: element.title, date: element.date, content: element.content });
-    }
-  });
+  User.findOne({ _id: req.user._id })
+    .populate("posts")
+    .exec(function(err, user) {
+      if (err) {
+        console.error(err);
+        // Handle error, possibly send a response indicating an error occurred
+        res.status(500).send("An error occurred while retrieving the user's posts.");
+      } else {
+        const post = user.posts.find((element) => element.title === title);
+        if (post) {
+          res.render("post", { title: post.title, date: post.date, content: post.content });
+        } else {
+          // Handle case where post with the given title was not found
+          res.status(404).send("Post not found.");
+        }
+      }
+    });
 });
+
 
 
 
