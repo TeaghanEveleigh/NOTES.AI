@@ -4,7 +4,6 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
 const User = require('./models/User'); // Import the User model or replace it with your own
 
 const app = express();
@@ -143,11 +142,8 @@ app.post('/login', async (req, res) => {
       return res.render('login');
     }
 
-    // Compare the provided password with the stored password
-    const passwordMatch = await bcrypt.compare(password, user.password);
-
-    // Check if the passwords match
-    if (!passwordMatch) {
+    // Check if the provided password matches the stored password
+    if (password !== user.password) {
       return res.render('login');
     }
 
@@ -161,6 +157,7 @@ app.post('/login', async (req, res) => {
     res.status(500).render('login');
   }
 });
+
 
 // Render the signup page
 app.get('/signup', (req, res) => {
