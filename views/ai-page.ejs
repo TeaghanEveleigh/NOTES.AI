@@ -30,17 +30,22 @@
 </style>
 <body>
     <div class="note-container">
-        <h1>Edit AI-Generated Content</h1>
+        <h1>Compose</h1>
         <form action="/compose" method="post">
             <div class="mb-3">
                 <label for="exampleFormControlInput1" class="form-label">Title</label>
                 <input type="text" name="titleOfPost" autocomplete="off" class="form-control" id="exampleFormControlInput1" value="<%=title%>">
+            </div>
+            <div class="form-group">
+                <label for="exampleFormControlInput1">AiPrompts!</label>
+                <input type="text" name="Prompt" autocomplete="off" class="form-control" id="exampleFormControlInput1" required>
             </div>
             <div class="mb-3">
                 <label for="exampleFormControlTextarea1" class="form-label">post</label>
                 <textarea class="form-control" id="exampleFormControlTextarea1" rows="10" name="contentOfPost" autocomplete="off" required><%= generatedText %></textarea>
             </div>
             <button class="btn btn-primary mt-5" type="submit" name="action" value="create">Create</button>
+            <button class="btn btn-light" type="submit" name="action" value="generate_ai">Generate AI</button>
         </form>
     </div>
     <!-- jQuery -->
