@@ -1,6 +1,35 @@
 <%- include("partials/header") %>
+<style>
+    .note-container {
+        width: 80%;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        box-shadow: 0px 5px 15px rgba(0,0,0,0.1);
+        background: white;
+    }
+    .note-container h1 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .note-container .form-group {
+        margin-bottom: 20px;
+    }
+    .note-container textarea {
+        min-height: 200px;
+    }
+    .note-container button {
+        margin-top: 20px;
+    }
+    @media (max-width: 768px) {
+        .note-container {
+            width: 100%;
+            padding: 10px;
+        }
+    }
+</style>
 <body>
-    <div class="container">
+    <div class="container note-container">
         <h1>Compose</h1>
         <form action="/compose" method="post">
             <div class="form-group">
@@ -11,8 +40,8 @@
                 <label for="exampleFormControlTextarea1">Create your own note or prompt AI with a description</label>
                 <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" type="text" name="contentOfPost" autocomplete="off" required></textarea>
             </div>
-            <button class="btn btn-primary mt-5" type="submit" name="action" value="create">Create</button>
-            <button class="btn btn-light mt-5" type="submit" name="action" value="generate_ai">Generate AI</button>
+            <button class="btn btn-primary" type="submit" name="action" value="create">Create</button>
+            <button class="btn btn-light" type="submit" name="action" value="generate_ai">Generate AI</button>
         </form>
     </div>
     <!-- Bootstrap JS -->
@@ -20,6 +49,4 @@
     <!-- Bootstrap JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </body>
-
-
 <%- include("partials/footer") %>
