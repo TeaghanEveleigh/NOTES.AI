@@ -99,7 +99,7 @@ button{
   /* Hover effect for the post and plus button */
   .post:hover, .plus-button:hover {
     transform: scale(1.05) translateY(-10px); /* Zooms the box and moves it up */
-    border-bottom: 4px solid #4449d0; 
+    border-bottom: 4px solid #363333; 
     overflow: hidden;/* Changes the bottom border to blue */
   }
   
