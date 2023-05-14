@@ -233,16 +233,22 @@ button{
 /* Position the icons and text */
 .post-icons {
   display: flex;
-  justify-content: flex-end;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-end;
+  position: absolute;
+  top: 10px;
+  right: 10px;
 }
 
 .icon {
   position: relative;
-  margin-left: 10px; /* Adjust as needed */
+  margin-bottom: 10px; /* Adjust as needed */
 }
 
 .icon svg {
   display: block;
+  transition: transform 0.3s ease-in-out;
 }
 
 .icon-text {
@@ -250,13 +256,17 @@ button{
   right: 100%;
   white-space: nowrap;
   transition: transform 0.3s ease-in-out;
-  transform: translateX(100%);
 }
 
 /* Show the text on hover */
 .icon:hover .icon-text {
   transform: translateX(0);
 }
+
+.icon:hover svg {
+  transform: translateX(20px); /* Adjust as needed */
+}
+
 
 
 
