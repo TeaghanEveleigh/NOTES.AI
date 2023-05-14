@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const mongoose = require('mongoose');
 const User = require('./models/user');
-const note = require('./models/note') // Import the User model or replace it with your own
+const Note = require('./models/note') // Import the User model or replace it with your own
 
 const app = express();
 
