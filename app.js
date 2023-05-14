@@ -136,12 +136,30 @@ app.get("/post/:title", function(req, res) {
   let title = req.params.title;
   console.log(title);
 
-  req.session.posts.forEach(element => {
-    if (element.title === title) {
-      res.render("post", { title: element.title, date: element.date, content: element.content });
-    }
-  });
+  if (!req.session || !req.session.userId) {
+    return res.status(401).send('Unauthorized');
+  }
+
+  User.findById(req.session.userId)
+    .populate('posts')
+    .exec()
+    .then(user => {
+      if (!user) {
+        throw new Error('User not found');
+      }
+      let post = user.posts.find(element => element.title === title);
+      if (!post) {
+        res.status(404).send('Post not found');
+      } else {
+        res.render("post", { title: post.title, date: post.date, content: post.content });
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      res.status(500).send("An error occurred.");
+    });
 });
+
 
 
 
