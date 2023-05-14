@@ -4,8 +4,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const mongoose = require('mongoose');
-const User = require('./models/user');
-const Note = require('./models/note'); // Import the User model or replace it with your own
+const User = require('./models/user'); // Import the User model or replace it with your own
 
 const app = express();
 
@@ -71,7 +70,7 @@ app.post("/compose", function(req, res){
       }
     });
   } else {
-    req.session.user.posts.push(post);
+    req.session.posts.push(post);
     res.redirect("/");
   }
 });
