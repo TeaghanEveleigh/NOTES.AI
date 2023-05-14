@@ -95,14 +95,14 @@ app.post("/compose", function(req, res) {
         throw new Error('Failed to save note');
       }
       // Update user
-      return User.findById(userId);
+      return { user: User.findById(userId), savedNote };
     })
-    .then(user => {
-      if (!user) {
+    .then(data => {
+      if (!data.user) {
         throw new Error('User not found');
       }
-      user.posts.push(savedNote._id);
-      return user.save();
+      data.user.posts.push(data.savedNote._id);
+      return data.user.save();
     })
     .then(user => {
       if (!user) {
@@ -116,6 +116,7 @@ app.post("/compose", function(req, res) {
     });
   }
 });
+
 
 
 app.get("/post/:title", function(req, res) {
