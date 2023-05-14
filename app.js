@@ -98,7 +98,8 @@ app.post("/compose", function(req, res) {
     const newNote = new Note({
       user: userId,
       content: post.content,
-      date: post.date
+      date: post.date,
+      title: post.title
     });
 
     newNote.save()
