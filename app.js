@@ -71,7 +71,7 @@ app.post("/compose", function(req, res){
     });
   } else {
     req.session.posts.push(post);
-    req.session.user.posts.push(post);
+    req.session.User.posts.push(post);
     res.redirect("/");
   }
 });
