@@ -4,7 +4,7 @@ const https = require('https');
 function generateText(prompt, callback) {
     const data = JSON.stringify({
         'prompt': prompt,
-        'max_tokens': 150,
+        'max_tokens': 200,
         'model': 'text-davinci-003'
     });
 
