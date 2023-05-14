@@ -203,14 +203,11 @@ app.post('/signup', async (req, res) => {
     // Check if the user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.render('signup');
+      return res.redirect('/signup');
     }
 
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10);
-
     // Create a new user
-    const newUser = new User({ email, password: hashedPassword });
+    const newUser = new User({ email, password });
     await newUser.save();
 
     // Store the user ID in the session
@@ -223,6 +220,7 @@ app.post('/signup', async (req, res) => {
     res.status(500).render('signup');
   }
 });
+
 
 // Render the dashboard page
 app.get('/', function(req, res) {
