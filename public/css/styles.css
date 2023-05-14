@@ -231,6 +231,7 @@ button{
   margin-left: 35px!important;
 }
 /* Position the icons and text */
+/* Position the icons and text */
 .post-icons {
   display: flex;
   flex-direction: column;
@@ -253,19 +254,22 @@ button{
 
 .icon-text {
   position: absolute;
-  right: 100%;
+  right: calc(100% + 5px); /* Move the text to the right of the icon, adjust the "5px" as needed */
   white-space: nowrap;
-  transition: transform 0.3s ease-in-out;
+  opacity: 0; /* Make the text invisible initially */
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
 }
 
 /* Show the text on hover */
 .icon:hover .icon-text {
-  transform: translateX(0);
+  transform: translateX(-20px); /* Move the text to the left, adjust as needed */
+  opacity: 1; /* Make the text visible */
 }
 
 .icon:hover svg {
-  transform: translateX(20px); /* Adjust as needed */
+  transform: translateX(-20px); /* Move the SVG icon to the left */
 }
+
 
 
 
