@@ -153,7 +153,6 @@ app.listen(port, function() {
 
 //show dps shows your databaases
 
-
 // Render the login page
 app.get('/login', (req, res) => {
   res.render('login');
@@ -162,7 +161,7 @@ app.get('/login', (req, res) => {
 // Handle login form submission
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
-  
+
   try {
     // Find the user by email
     const user = await User.findOne({ email });
@@ -226,7 +225,13 @@ app.post('/signup', async (req, res) => {
 });
 
 // Render the dashboard page
-
+app.get('/', function(req, res) {
+  if (req.session.userId) {
+    res.render('dashboard', { posts: req.session.posts });
+  } else {
+    res.redirect('/login');
+  }
+});
 
 // Logout route
 app.get('/logout', (req, res) => {
@@ -239,4 +244,4 @@ app.get('/logout', (req, res) => {
   });
 });
 
-
+// ...
