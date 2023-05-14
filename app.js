@@ -152,7 +152,7 @@ app.listen(port, function() {
 
 
 //show dps shows your databaases
-const bcrypt = require('bcrypt');
+
 
 // Render the login page
 app.get('/login', (req, res) => {
