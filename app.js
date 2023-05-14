@@ -36,7 +36,19 @@ app.use((req, res, next) => {
 
 app.get("/", function(req, res){
   if (req.session.userId) {
-    res.render("home", { posts: req.session.posts });
+    User.findById(req.session.userId)
+      .populate('posts')
+      .exec()
+      .then(user => {
+        if (!user) {
+          throw new Error('User not found');
+        }
+        res.render("home", { posts: user.posts });
+      })
+      .catch(err => {
+        console.error(err);
+        res.status(500).send("An error occurred.");
+      });
   } else {
     res.redirect('/login');
   }
