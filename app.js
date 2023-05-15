@@ -162,20 +162,23 @@ app.get("/post/:title", function(req, res) {
     });
 });
 app.post("/", function(req, res) {
-  const { action, title } = req.body;
-
+  const { action, id } = req.body;
+  
   const userId = req.user._id;
 
-  console.log(`Action: ${action}, Title: ${title}, User ID: ${userId}`);
+  console.log(`Action: ${action}, ID: ${id}, User ID: ${userId}`);
 
   if (action === "delete") {
     User.findOneAndUpdate(
-      { _id: userId, 'posts.title': title },
-      { $pull: { posts: { title: title } } },
+      { _id: userId, 'posts._id': id },
+      { $pull: { posts: { _id: id } } },
       { new: true, useFindAndModify: false },
       function(err, result) {
         if (err) {
-          console.error(err);
+          console.error('Error during MongoDB operation:', err);
+          console.error('Action:', action);
+          console.error('User ID:', userId);
+          console.error('Post ID:', id);
           res.status(500).json({ error: err.toString() });
         } else {
           if (result) {
@@ -190,7 +193,6 @@ app.post("/", function(req, res) {
     // Handle other actions
   }
 });
-
 
 
 
