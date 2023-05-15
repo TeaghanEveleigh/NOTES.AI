@@ -162,16 +162,16 @@ app.get("/post/:title", function(req, res) {
     });
 });
 app.post("/", function(req, res) {
-  const { action, id } = req.body;
-  
+  const { action, title } = req.body;
+
   const userId = req.user._id;
 
-  console.log(`Action: ${action}, ID: ${id}, User ID: ${userId}`);
+  console.log(`Action: ${action}, Title: ${title}, User ID: ${userId}`);
 
   if (action === "delete") {
     User.findOneAndUpdate(
-      { _id: userId, 'posts._id': id },
-      { $pull: { posts: { _id: id } } },
+      { _id: userId, 'posts.title': title },
+      { $pull: { posts: { title: title } } },
       { new: true, useFindAndModify: false },
       function(err, result) {
         if (err) {
@@ -190,6 +190,7 @@ app.post("/", function(req, res) {
     // Handle other actions
   }
 });
+
 
 
 
