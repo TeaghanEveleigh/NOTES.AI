@@ -1,9 +1,11 @@
 <%- include("partials/header") -%>
 
 <body>
-    <h1>TITLE: <%= title %></h1>
+    <div class="conatainer"><h1>TITLE: <%= title %></h1>
     <h2 class="date"><%= date %></h2>
     <p><%- content.replace(/\n/g, '<br>').replace(/<code>(.*?)<\/code>/g, '<code>$1</code>') %></p>
+</div>
+    
 </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <!-- Bootstrap JavaScript -->
