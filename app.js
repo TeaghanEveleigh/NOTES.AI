@@ -184,6 +184,7 @@ app.post("/", function(req, res) {
               }
           }
       );
+      res.redirect("/");
   } else {
       // Handle other actions
   }
