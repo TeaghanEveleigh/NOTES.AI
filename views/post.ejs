@@ -1,10 +1,43 @@
 <%- include("partials/header") -%>
-
+<style>
+    .note-container {
+        width: 80%;
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        box-shadow: 0px 5px 15px rgba(0,0,0,0.1);
+        background: white;
+    }
+    .note-container h1 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .note-container .form-group {
+        margin-bottom: 20px;
+    }
+    .note-container textarea {
+        min-height: 40vh;
+    }
+    .note-container button {
+        margin-top: 20px;
+    }
+    @media (max-width: 768px) {
+        .note-container {
+            width: 100%;
+            padding: 10px;
+        }
+    }
+</style>
 <body>
-    <div class="conatainer pl-5"><h1>TITLE: <%= title %></h1>
-    <h2 class="date"><%= date %></h2>
-    <p><%- content.replace(/\n/g, '<br>').replace(/<code>(.*?)<\/code>/g, '<code>$1</code>') %></p>
+    <div class="note-container">
+       
+        <div class="conatainer"><h1 class="title-posts">TITLE: <%= title %></h1>
+    <h2 class="date-posts"><%= date %></h2>
+    <p class="content-posts"><%- content.replace(/\n/g, '<br>').replace(/<code>(.*?)<\/code>/g, '<code>$1</code>') %></p>
 </div>
+    </div>
+
+    
     
 </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
