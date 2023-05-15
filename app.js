@@ -166,7 +166,7 @@ app.post("/", function(req, res) {
   const id = req.body.id;
   const action = req.body.action;
 
-  console.log("the id is " + id);
+  console.log("the id of the note  is " + id);
   const userId = req.session.userId;
   console.log("the user id is " + userId);
   console.log("the id being passed is ");
@@ -174,9 +174,9 @@ app.post("/", function(req, res) {
 
   if (action === "delete") {
     User.findOneAndUpdate(
-      { _id: userId, 'posts._id': id },
-      { $pull: { 'posts': { _id: id } } },
-      { new: true, useFindAndModify: false }
+      { _id: userId, 'posts._id': ObjectId(id) }, // Convert id to ObjectId
+    { $pull: { 'posts': { _id: ObjectId(id) } } }, // Convert id to ObjectId
+    { new: true, useFindAndModify: false }
     )
     .then(result => {
         if (result) {
