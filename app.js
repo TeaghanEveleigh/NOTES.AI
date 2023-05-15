@@ -161,7 +161,7 @@ app.get("/post/:title", function(req, res) {
       res.status(500).send("An error occurred.");
     });
 });
-app.post("/home", function(req, res) {
+app.post("/", function(req, res) {
   // Get the action and id from the request body
   const { action, id } = req.body;
 
