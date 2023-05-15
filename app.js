@@ -163,12 +163,15 @@ app.get("/post/:title", function(req, res) {
 });
 app.post("/", function(req, res) {
   const { action, id } = req.body;
+  
+  // Assuming you have access to the current logged-in user's id
+  const userId = req.user._id;
 
   if (action === "delete") {
-    User.update(
-      { 'posts._id': id },
+    User.findOneAndUpdate(
+      { _id: userId, 'posts._id': id },
       { $pull: { posts: { _id: id } } },
-      { new: true, useFindAndModify: false, multi: true },
+      { new: true, useFindAndModify: false },
       function(err, result) {
         if (err) {
           res.status(500).json({ error: err.toString() });
@@ -181,6 +184,7 @@ app.post("/", function(req, res) {
     // Handle other actions
   }
 });
+
 
 
 
