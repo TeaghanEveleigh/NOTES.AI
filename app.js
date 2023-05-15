@@ -162,9 +162,9 @@ app.get("/post/:title", function(req, res) {
     });
 });
 app.post("/", function(req, res) {
-  const body = req.body;
-  const id =req.body._id;
-  const action = req.body.action;
+  const id = req.query.id; // Retrieve id from query parameters
+  const action = req.query.action;
+
   console.log("the id is " + id);
   const userId = req.user._id;
   console.log("the id being passes is ")
