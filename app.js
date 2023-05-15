@@ -163,11 +163,11 @@ app.get("/post/:title", function(req, res) {
 });
 app.post("/", function(req, res) {
   console.log(req.body);
-  const id = mongoose.Types.ObjectId(req.body.id);
+  const id = new mongoose.Types.ObjectId(req.body.id);
   const action = req.body.action;
 
   console.log("the id of the note is " + id);
-  const userId = mongoose.Types.ObjectId(req.session.userId);
+  const userId = new mongoose.Types.ObjectId(req.session.userId);
   console.log("the user id is " + userId);
   console.log("the id being passed is ");
   console.log(`Action: ${action}, ID: ${id}, User ID: ${userId}`);
