@@ -195,7 +195,7 @@ app.post("/", function(req, res) {
   } else {
     // Handle other actions
   }
-  res.redirect("/");
+ 
 });
 
 
