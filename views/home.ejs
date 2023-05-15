@@ -11,17 +11,18 @@
             <div class="post" data-id="<%=element._id%>" data-url="/<%=element._id%>">
                 <form id="form-<%=element._id%>" method="post" action="/">
                     <input type="hidden" name="id" value="<%=element._id%>">
+                    <input type="hidden" name="action" id="action-<%=element._id%>"> <!-- Hidden action field -->
                     <div class="post-icons">
                         <div class="icon edit-icon" data-action="edit">
                             <!-- SVG code here... -->
-                            <button type="submit" onclick="this.form.action.value='edit';">
+                            <button type="submit" onclick="document.getElementById('action-<%=element._id%>').value='edit';">
                                 <!-- SVG details... -->
                             </button>
                             <span class="icon-text">Edit</span>
                         </div>
                         <div class="icon delete-icon" data-action="delete">
                             <!-- SVG code here... -->
-                            <button type="submit" onclick="this.form.action.value='delete';">
+                            <button type="submit" onclick="document.getElementById('action-<%=element._id%>').value='delete';">
                                 <!-- SVG details... -->
                             </button>
                             <span class="icon-text">Delete</span>
