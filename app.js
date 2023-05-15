@@ -169,13 +169,13 @@ app.post("/", function(req, res) {
   console.log("the id is " + id);
   const userId = req.session.userId;
   console.log("the user id is " + userId);
-  console.log("the id being passes is ");
+  console.log("the id being passed is ");
   console.log(`Action: ${action}, ID: ${id}, User ID: ${userId}`);
 
   if (action === "delete") {
     User.findOneAndUpdate(
       { _id: userId, 'posts._id': id },
-      { $pull: { posts: { _id: id } } },
+      { $pull: { 'posts': { _id: id } } },
       { new: true, useFindAndModify: false }
     )
     .then(result => {
@@ -195,8 +195,8 @@ app.post("/", function(req, res) {
   } else {
     // Handle other actions
   }
- 
 });
+
 
 
 
