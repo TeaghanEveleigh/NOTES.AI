@@ -5,8 +5,7 @@ const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const mongoose = require('mongoose');
 const User = require('./models/user');
-const Note = require('./models/note');
-const { ObjectId } = require('bson'); // Import the User model or replace it with your own
+const Note = require('./models/note') // Import the User model or replace it with your own
 
 const app = express();
 
@@ -175,8 +174,8 @@ app.post("/", function(req, res) {
 
   if (action === "delete") {
     User.findOneAndUpdate(
-      { _id: ObjectId(userId), 'posts._id': ObjectId(id) }, // Convert userId and id to ObjectId
-      { $pull: { 'posts': { _id: ObjectId(id) } } },
+      { _id: userId, 'posts._id': ObjectId(id) },
+      { $pull: { 'posts': { _id: ObjextId(id) } } },
       { new: true, useFindAndModify: false }
     )
     .then(result => {
