@@ -163,10 +163,10 @@ app.get("/post/:title", function(req, res) {
 });
 app.post("/", function(req, res) {
   console.log(req.body);
-  const id = req.body.id;
+  const id = mongoose.Types.ObjectId(req.body.id);
   const action = req.body.action;
 
-  console.log("the id of the note  is " + id);
+  console.log("the id of the note is " + id);
   const userId = req.session.userId;
   console.log("the user id is " + userId);
   console.log("the id being passed is ");
@@ -196,6 +196,7 @@ app.post("/", function(req, res) {
     // Handle other actions
   }
 });
+
 
 
 
