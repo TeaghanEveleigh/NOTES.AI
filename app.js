@@ -164,10 +164,8 @@ app.get("/post/:title", function(req, res) {
 app.post("/", function(req, res) {
   const { action, id } = req.body;
   
-  // Assuming you have access to the current logged-in user's id
-  const userId = req.session._id;
+  const userId = req.user._id;
 
-  // Add logging to see the values of action, id, and userId
   console.log(`Action: ${action}, ID: ${id}, User ID: ${userId}`);
 
   if (action === "delete") {
@@ -177,12 +175,14 @@ app.post("/", function(req, res) {
       { new: true, useFindAndModify: false },
       function(err, result) {
         if (err) {
-          // Log the error on the server
           console.error(err);
-
           res.status(500).json({ error: err.toString() });
         } else {
-          res.json(result);
+          if (result) {
+            res.json(result);
+          } else {
+            res.status(404).json({ error: "No matching user post found" });
+          }
         }
       }
     );
@@ -190,6 +190,7 @@ app.post("/", function(req, res) {
     // Handle other actions
   }
 });
+
 
 
 
