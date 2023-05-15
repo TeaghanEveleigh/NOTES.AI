@@ -163,35 +163,41 @@ app.get("/post/:title", function(req, res) {
 });
 app.post("/", function(req, res) {
   console.log(req.body);
-  const id = new mongoose.Types.ObjectId(req.body.id);
+  const id = mongoose.Types.ObjectId(req.body.id);
   const action = req.body.action;
 
   console.log("the id of the note is " + id);
-  const userId = new mongoose.Types.ObjectId(req.session.userId);
+  const userId = mongoose.Types.ObjectId(req.session.userId);
   console.log("the user id is " + userId);
   console.log("the id being passed is ");
   console.log(`Action: ${action}, ID: ${id}, User ID: ${userId}`);
 
   if (action === "delete") {
-    User.findOneAndUpdate(
-      { _id: userId, 'posts._id': id },
-      { $pull: { 'posts': { _id: id } } },
-      { new: true, useFindAndModify: false }
-    )
-    .then(result => {
-        if (result) {
-            res.json(result);
+    // Find user and check if post id exists in user's posts
+    User.findById(userId)
+      .then(user => {
+        if (user && user.posts.includes(id)) {
+          // If post exists, delete it from Note collection
+          Note.findByIdAndDelete(id)
+            .then(() => {
+              // Update user's posts array
+              User.findByIdAndUpdate(userId, { $pull: { posts: id } }, { new: true, useFindAndModify: false })
+                .then(updatedUser => {
+                  res.json(updatedUser);
+                });
+            })
+            .catch(err => {
+              console.error('Error during Note deletion:', err);
+              res.status(500).json({ error: err.toString() });
+            });
         } else {
-            res.status(404).json({ error: "No matching user post found" });
+          res.status(404).json({ error: "No matching user post found" });
         }
-    })
-    .catch(err => {
-        console.error('Error during MongoDB operation:', err);
-        console.error('Action:', action);
-        console.error('User ID:', userId);
-        console.error('Post ID:', id);
+      })
+      .catch(err => {
+        console.error('Error during User search:', err);
         res.status(500).json({ error: err.toString() });
-    });
+      });
   } else {
     // Handle other actions
   }
