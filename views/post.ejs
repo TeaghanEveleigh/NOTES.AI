@@ -1,7 +1,7 @@
 <%- include("partials/header") -%>
 
 <body>
-    <div class="conatainer"><h1>TITLE: <%= title %></h1>
+    <div class="conatainer pl-5"><h1>TITLE: <%= title %></h1>
     <h2 class="date"><%= date %></h2>
     <p><%- content.replace(/\n/g, '<br>').replace(/<code>(.*?)<\/code>/g, '<code>$1</code>') %></p>
 </div>
