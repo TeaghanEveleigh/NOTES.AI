@@ -167,7 +167,7 @@ app.post("/", function(req, res) {
   const action = req.body.action;
 
   console.log("the id of the note is " + id);
-  const userId = req.session.userId;
+  const userId = new mongoose.Types.ObjectId(req.session.userId);
   console.log("the user id is " + userId);
   console.log("the id being passed is ");
   console.log(`Action: ${action}, ID: ${id}, User ID: ${userId}`);
