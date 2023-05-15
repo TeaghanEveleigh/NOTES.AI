@@ -174,8 +174,8 @@ app.post("/", function(req, res) {
 
   if (action === "delete") {
     User.findOneAndUpdate(
-      { _id: userId, 'posts._id': ObjectId(id) },
-      { $pull: { 'posts': { _id: ObjextId(id) } } },
+      { _id: userId, 'posts._id': id },
+      { $pull: { 'posts': { _id: id } } },
       { new: true, useFindAndModify: false }
     )
     .then(result => {
