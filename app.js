@@ -94,7 +94,7 @@ app.post("/compose", function(req, res) {
       return res.status(401).send('Unauthorized');
     }
 
-    const userId = req.session.userId;
+    const userId = req.session.userId ;
 
     // Create a new note
     const newNote = new Note({
@@ -167,7 +167,7 @@ app.post("/", function(req, res) {
 
 
   console.log("the id is " + id);
-  const userId = req.session.user._id;
+  const userId = req.session.userId;
   console.log("the user id is " + userId);
   console.log("the id being passes is ")
   console.log(`Action: ${action}, ID: ${id}, User ID: ${userId}`);
