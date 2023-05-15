@@ -167,6 +167,9 @@ app.post("/", function(req, res) {
   // Assuming you have access to the current logged-in user's id
   const userId = req.user._id;
 
+  // Add logging to see the values of action, id, and userId
+  console.log(`Action: ${action}, ID: ${id}, User ID: ${userId}`);
+
   if (action === "delete") {
     User.findOneAndUpdate(
       { _id: userId, 'posts._id': id },
@@ -174,6 +177,9 @@ app.post("/", function(req, res) {
       { new: true, useFindAndModify: false },
       function(err, result) {
         if (err) {
+          // Log the error on the server
+          console.error(err);
+
           res.status(500).json({ error: err.toString() });
         } else {
           res.json(result);
@@ -183,8 +189,8 @@ app.post("/", function(req, res) {
   } else {
     // Handle other actions
   }
-  res.redirect("/");
 });
+
 
 
 
