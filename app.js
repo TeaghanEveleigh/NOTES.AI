@@ -163,9 +163,9 @@ app.get("/post/:title", function(req, res) {
 });
 app.post("/", function(req, res) {
   const { action, id } = req.body;
-  
+  console.log("the id is " + id);
   const userId = req.user._id;
-
+  console.log("the id being passes is ")
   console.log(`Action: ${action}, ID: ${id}, User ID: ${userId}`);
 
   if (action === "delete") {
