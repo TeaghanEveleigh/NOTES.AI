@@ -9,7 +9,8 @@
         <% posts.slice().reverse().forEach(element => { %>
             <!-- Individual Post -->
             <div class="post" data-id="<%=element._id%>" data-url="/<%=element._id%>">
-                <form id="form-<%=element._id%>" method="post" action="/?id=<%=element._id%>">
+                <form id="form-<%=element._id%>" method="post" action="/">
+                    <input type="hidden" name="id" value="<%=element._id%>">
                     <div class="post-icons">
                         <div class="icon edit-icon" data-action="edit">
                             <!-- SVG code here... -->
@@ -26,30 +27,26 @@
                             <span class="icon-text">Delete</span>
                         </div>
                     </div>
- 
+                </form>
                 <h2 class="post-title"><%= element.title %></h2>
                 <p class="post-text"><%= element.content.slice(0,35) %></p>
                 <a href="/post/<%=element.title%>" class="read-more">Read More</a>
                 <p class="post-date"><%=element.date%></p>
             </div>
         <%  });  %>
-
-        <!-- Plus Button -->
-       
     </div>
     
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <!-- Bootstrap JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script>
-
-function sendPostRequest(url, action, id) {
-    fetch(url + '?action=' + action + '&id=' + id, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        }
-    })
+        function sendPostRequest(url, action, id) {
+            fetch(url + '?action=' + action + '&id=' + id, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
