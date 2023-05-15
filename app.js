@@ -165,8 +165,10 @@ app.post("/", function(req, res) {
   const id = req.body.id;
   const action = req.body.action;
 
+
   console.log("the id is " + id);
   const userId = req.session.user._id;
+  console.log("the user id is " + userId);
   console.log("the id being passes is ")
   console.log(`Action: ${action}, ID: ${id}, User ID: ${userId}`);
 
