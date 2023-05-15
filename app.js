@@ -162,7 +162,7 @@ app.get("/post/:title", function(req, res) {
     });
 });
 app.post("/", function(req, res) {
-  const id = req.query.id; // Retrieve id from query parameters
+  const id = req.query.id;
   const action = req.query.action;
 
   console.log("the id is " + id);
