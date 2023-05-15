@@ -161,6 +161,33 @@ app.get("/post/:title", function(req, res) {
       res.status(500).send("An error occurred.");
     });
 });
+app.post("/home", function(req, res) {
+  // Get the action and id from the request body
+  const { action, id } = req.body;
+
+  // Assuming you have access to the current logged-in user's id
+  const userId = req.user._id;
+
+  if (action === "delete") {
+      // If the action is delete, find the user and update their posts array
+      User.findByIdAndUpdate(
+          userId,
+          { $pull: { posts: { _id: id } } },
+          { new: true, useFindAndModify: false },
+          function(err, result) {
+              if (err) {
+                  // Handle error
+                  res.status(500).send(err);
+              } else {
+                  // Return updated user
+                  res.json(result);
+              }
+          }
+      );
+  } else {
+      // Handle other actions
+  }
+});
 
 
 
