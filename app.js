@@ -183,7 +183,7 @@ app.post("/", function(req, res) {
               // Update user's posts array
               User.findByIdAndUpdate(userId, { $pull: { posts: id } }, { new: true, useFindAndModify: false })
                 .then(updatedUser => {
-                  res.json(updatedUser);
+                  res.redirect("/");
                 });
             })
             .catch(err => {
