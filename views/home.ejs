@@ -7,7 +7,6 @@
             <a href="/compose">+</a>
         </div>
         <% posts.slice().reverse().forEach(element => { %>
-            <% console.log("element id is "+element._id); %>
             <!-- Individual Post -->
             <div class="post" data-id="<%=element._id%>" data-url="/<%=element.id%>">
                 <div class="post-icons">
@@ -48,14 +47,13 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script>
 
-        function sendPostRequest(url, action, id) {
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({action: action, id: id})
-            })
+function sendPostRequest(url, action, id) {
+    fetch(url + '?action=' + action + '&id=' + id, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
