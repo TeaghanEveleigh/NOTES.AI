@@ -41,23 +41,24 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script>
         function sendPostRequest(url, action, id) {
-            fetch(url + '?action=' + action + '&id=' + id, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => console.log(data))
-            .catch(error => {
-                console.error('There has been a problem with your fetch operation:', error);
-            });
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ action: action, id: id }) // Send action and id in the body
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
         }
+        return response.json();
+    })
+    .then(data => console.log(data))
+    .catch(error => {
+        console.error('There has been a problem with your fetch operation:', error);
+    });
+}
     </script>
 </body>
 <%- include("partials/footer") %>

@@ -162,8 +162,8 @@ app.get("/post/:title", function(req, res) {
     });
 });
 app.post("/", function(req, res) {
-  const id = req.body.id;
-  const action = req.body.action;
+  const id = req.query.id; // Read id from query parameters
+  const action = req.query.action;
 
 
   console.log("the id is " + id);
