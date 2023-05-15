@@ -165,7 +165,7 @@ app.post("/", function(req, res) {
   const { action, id } = req.body;
   
   // Assuming you have access to the current logged-in user's id
-  const userId = req.user._id;
+  const userId = req.session.user._id;
 
   // Add logging to see the values of action, id, and userId
   console.log(`Action: ${action}, ID: ${id}, User ID: ${userId}`);
