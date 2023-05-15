@@ -26,21 +26,24 @@
                         </div>
                         
                         <script>
-                            function sendPostRequest(url, action, id) {
-                                fetch(url, {
-                                    method: 'POST', // specify the request method
-                                    headers: {
-                                        'Content-Type': 'application/json', // specify the data type
-                                        // 'Authorization': 'Bearer ' + token // if you use token-based authentication
-                                    },
-                                    body: JSON.stringify({action: action, id: id}) // send the action and id as properties in the request body
-                                })
-                                .then(response => response.json())
-                                .then(data => console.log(data))
-                                .catch((error) => {
-                                  console.error('Error:', error);
-                                });
-                            }
+                            fetch(url, {
+  method: 'POST', // specify the request method
+  headers: {
+    'Content-Type': 'application/json', // specify the data type
+  },
+  body: JSON.stringify({action: action, id: id}) // send the action and id as properties in the request body
+})
+.then(response => {
+  if (!response.ok) {
+    throw new Error('Network response was not ok');
+  }
+  return response.json();
+})
+.then(data => console.log(data))
+.catch(error => {
+  console.error('There has been a problem with your fetch operation:', error);
+});
+
                         </script>
                             
               

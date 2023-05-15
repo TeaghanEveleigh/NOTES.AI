@@ -169,37 +169,26 @@ app.post("/", function(req, res) {
   const userId = req.user._id;
 
   if (action === "delete") {
-      // Convert string id to ObjectId
-      const objectId = mongoose.Types.ObjectId(id);
-
-      // First, delete the note document
-      Note.findByIdAndRemove(objectId, function(err) {
-          if (err) {
-              // Handle error
-              res.status(500).send(err);
-          } else {
-              // Then, if the note document is successfully deleted,
-              // pull its id from the posts array in the User document
-              User.findByIdAndUpdate(
-                  userId,
-                  { $pull: { posts: objectId } },
-                  { new: true, useFindAndModify: false },
-                  function(err, result) {
-                      if (err) {
-                          // Handle error
-                          res.status(500).send(err);
-                      } else {
-                          // Return updated user
-                          res.json(result);
-                      }
-                  }
-              );
+      // If the action is delete, find the user and update their posts array
+      User.findByIdAndUpdate(
+          userId,
+          { $pull: { posts: { _id: id } } },
+          { new: true, useFindAndModify: false },
+          function(err, result) {
+              if (err) {
+                  // Handle error
+                  res.status(500).json({ error: err.toString() });
+              } else {
+                  // Return updated user
+                  res.json(result);
+              }
           }
-      });
+      );
   } else {
       // Handle other actions
   }
 });
+
 
 
 
