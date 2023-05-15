@@ -8,7 +8,7 @@
         </div>
         <% posts.slice().reverse().forEach(element => { %>
             <!-- Individual Post -->
-            <div class="post" data-id="<%=element._id%>" data-url="/<%=element.id%>">
+            <div class="post" data-id="<%=element._id%>" data-url="/<%=element._id%>">
                 <form id="form-<%=element._id%>" method="post" action="/?id=<%=element._id%>">
                     <div class="post-icons">
                         <div class="icon edit-icon" data-action="edit">
