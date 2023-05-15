@@ -9,30 +9,23 @@
         <% posts.slice().reverse().forEach(element => { %>
             <!-- Individual Post -->
             <div class="post" data-id="<%=element._id%>" data-url="/<%=element.id%>">
-                <div class="post-icons">
-                    <div class="icon edit-icon" data-action="edit">
-        
-                        <!-- SVG code here... -->
-                        <button type="submit" form="form-<%=element._id%>" onclick="document.getElementById('form-<%=element._id%>').action.value='edit';">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                                <!-- SVG path details... -->
-                            </svg>
-                        </button>
-        
-                        <span class="icon-text">Edit</span>
+                <form id="form-<%=element._id%>" method="post" action="/?id=<%=element._id%>">
+                    <div class="post-icons">
+                        <div class="icon edit-icon" data-action="edit">
+                            <!-- SVG code here... -->
+                            <button type="submit" onclick="this.form.action.value='edit';">
+                                <!-- SVG details... -->
+                            </button>
+                            <span class="icon-text">Edit</span>
+                        </div>
+                        <div class="icon delete-icon" data-action="delete">
+                            <!-- SVG code here... -->
+                            <button type="submit" onclick="this.form.action.value='delete';">
+                                <!-- SVG details... -->
+                            </button>
+                            <span class="icon-text">Delete</span>
+                        </div>
                     </div>
-                    <div class="icon delete-icon" data-action="delete">
-        
-                        <!-- SVG code here... -->
-                        <button type="submit" form="form-<%=element._id%>" onclick="document.getElementById('form-<%=element._id%>').action.value='delete';">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
-                                <!-- SVG path details... -->
-                            </svg>
-                        </button>
-        
-                        <span class="icon-text">Delete</span>
-                    </div>
-                </div>
  
                 <h2 class="post-title"><%= element.title %></h2>
                 <p class="post-text"><%= element.content.slice(0,35) %></p>
