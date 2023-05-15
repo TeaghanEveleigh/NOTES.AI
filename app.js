@@ -6,7 +6,7 @@ const ejs = require("ejs");
 const mongoose = require('mongoose');
 const User = require('./models/user');
 const Note = require('./models/note');
-const { ObjectId } = mongoose.Types; // Import the User model or replace it with your own
+const { ObjectId } = require('mongoose').Types; // Import the User model or replace it with your own
 
 const app = express();
 
