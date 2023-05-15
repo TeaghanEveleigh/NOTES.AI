@@ -166,39 +166,38 @@ app.post("/", function(req, res) {
   const id = req.body.id;
   const action = req.body.action;
 
-
   console.log("the id is " + id);
   const userId = req.session.userId;
   console.log("the user id is " + userId);
-  console.log("the id being passes is ")
+  console.log("the id being passes is ");
   console.log(`Action: ${action}, ID: ${id}, User ID: ${userId}`);
 
   if (action === "delete") {
     User.findOneAndUpdate(
       { _id: userId, 'posts._id': id },
       { $pull: { posts: { _id: id } } },
-      { new: true, useFindAndModify: false },
-      function(err, result) {
-        if (err) {
-          console.error('Error during MongoDB operation:', err);
-          console.error('Action:', action);
-          console.error('User ID:', userId);
-          console.error('Post ID:', id);
-          res.status(500).json({ error: err.toString() });
-        } else {
-          if (result) {
+      { new: true, useFindAndModify: false }
+    )
+    .then(result => {
+        if (result) {
             res.json(result);
-          } else {
+        } else {
             res.status(404).json({ error: "No matching user post found" });
-          }
         }
-      }
-    );
+    })
+    .catch(err => {
+        console.error('Error during MongoDB operation:', err);
+        console.error('Action:', action);
+        console.error('User ID:', userId);
+        console.error('Post ID:', id);
+        res.status(500).json({ error: err.toString() });
+    });
   } else {
     // Handle other actions
   }
   res.redirect("/");
 });
+
 
 
 
