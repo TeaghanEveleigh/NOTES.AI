@@ -199,8 +199,22 @@ app.post("/", function(req, res) {
         res.status(500).json({ error: err.toString() });
       });
   } else {
+    res.redirect("/edit/"+id);
     // Handle other actions
   }
+});
+app.get("/edit/:objectid",function(req,res){
+  let id = req.params.objectid;
+  
+  Note.findById(id, function(err, note) {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log('Note:', note);
+      // Now you can use the 'note' object
+    }
+    res.render("edit",{title:note.title,text:note.content})
+})
 });
 
 
