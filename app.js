@@ -239,14 +239,17 @@ app.post("/edit/:id",async function(req,res){
   }
   if (req.body.action === 'generate_ai') {
     console.log("WE ARE USING AI");
-    generateText(req.body.Prompt, function(err, generatedText) {
+    generateText(req.body.Prompt, async function(err, generatedText) {
       if (err) {
         console.error(err);
         res.status(500).send("An error occurred while generating text.");
       } else {
         console.log(generatedText);
         prompts = generatedText;
-        res.render("edit", { title: note.title, generatedText: note.content+prompts });
+         note.content = note.content+prompts
+         await note.save();
+         res.redirect("/edit/"+note._id);
+        
       }
     });
   }
