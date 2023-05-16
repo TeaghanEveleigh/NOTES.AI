@@ -20,7 +20,10 @@
     }
     .note-container button {
         margin-top: 20px;
+        display: inline-block;
+    margin-right: 10px;
     }
+    
     @media (max-width: 768px) {
         .note-container {
             width: 100%;
@@ -44,13 +47,28 @@
                 <label for="exampleFormControlTextarea1">Create your own note or prompt AI with a description</label>
                 <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" type="text" name="contentOfPost" autocomplete="off" ></textarea>
             </div>
-            <button class="btn btn-primary" type="submit" name="action" value="create">Create</button>
-            <button class="btn btn-secondary" type="submit" name="action" value="generate_ai">Generate AI</button>
+            <div class="button-container">
+                <button class="btn btn-primary" type="submit" name="action" value="create">Create</button>
+                <button class="button" type="submit" name="action" value="generate_ai">Generate AI</button>
+            </div>
         </form>
     </div>
     <!-- Bootstrap JS -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <!-- Bootstrap JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script>
+        var button = $('.button'),
+		spinner = '<span class="spinner"></span>';
+
+button.click(function() {
+	if (!button.hasClass('loading')) {
+		button.toggleClass('loading').html(spinner);
+	}
+	else {
+		button.toggleClass('loading').html("Load");
+	}
+})
+    </script>
 </body>
 <%- include("partials/footer") %>

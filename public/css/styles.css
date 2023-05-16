@@ -275,6 +275,11 @@ button{
 .svg-button:hover {
   border: none;
 }
+.button-container {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+}
 
 
 .navbar-shadow {
