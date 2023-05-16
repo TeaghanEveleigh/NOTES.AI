@@ -210,10 +210,9 @@ app.get("/edit/:objectid",function(req,res){
     if (err) {
       console.log(err);
     } else {
-      console.log('Note:', note);
-      // Now you can use the 'note' object
+      res.render("edit",{title:note.title,text:note.content})
     }
-    res.render("edit",{title:note.title,text:note.content})
+    
 })
 });
 
