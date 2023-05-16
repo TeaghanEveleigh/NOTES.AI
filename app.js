@@ -223,6 +223,7 @@ app.get("/edit/:objectid", async function(req, res) {
   }
 });
 app.post("/edit/:id", async function(req,res){
+
   let id = req.params.id;
   let note;
   try {
@@ -250,7 +251,7 @@ app.post("/edit/:id", async function(req,res){
 
       console.log(generatedText);
       prompts = generatedText;
-      note.content = note.content + prompts;
+      note.content = req.body.contentOfPost + prompts;
       try {
         await note.save();
         res.redirect("/edit/"+note._id);
@@ -259,6 +260,16 @@ app.post("/edit/:id", async function(req,res){
         return res.status(500).send(err);
       }
     });
+  }else{
+    note.content = req.body.contentOfPost
+    try {
+      await note.save();
+      res.redirect("/edit/"+note._id);
+    } catch (err) {
+      console.log(err);
+      return res.status(500).send(err);
+    }
+    res.redirect("/");
   }
 });
 
