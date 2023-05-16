@@ -203,23 +203,25 @@ app.post("/", function(req, res) {
     // Handle other actions
   }
 });
-app.get("/edit/:objectid", function(req, res) {
+app.get("/edit/:objectid", async function(req, res) {
   let id = req.params.objectid;
 
-  Note.findById(id, function(err, note) {
-    if (err) {
-      console.log(err);
-      // Consider sending an error response or rendering an error page
-      return res.status(500).send(err);
-    } else if (!note) {
+  try {
+    const note = await Note.findById(id);
+    if (!note) {
       console.log("No note found with the given id");
       // Consider sending a 404 response or rendering a not-found page
       return res.status(404).send("No note found");
     }
-    // Only render the page if there are no errors and a note is found
+    // Only render the page if a note is found
     res.render("edit", {title: note.title, text: note.content});
-  });
+  } catch (err) {
+    console.log(err);
+    // Consider sending an error response or rendering an error page
+    return res.status(500).send(err);
+  }
 });
+
 
 
 
