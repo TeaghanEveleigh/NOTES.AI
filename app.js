@@ -239,7 +239,7 @@ app.post("/edit/:id",async function(req,res){
   }
   if (req.body.action === 'generate_ai') {
     console.log("WE ARE USING AI");
-    generateText(prompts, function(err, generatedText) {
+    generateText(req.body.Prompt, function(err, generatedText) {
       if (err) {
         console.error(err);
         res.status(500).send("An error occurred while generating text.");
