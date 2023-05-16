@@ -260,11 +260,11 @@ app.post("/edit/:id", async function(req,res){
         return res.status(500).send(err);
       }
     });
-  }else{
+  } else{
     note.content = req.body.contentOfPost
     try {
       await note.save();
-      res.redirect("/edit/"+note._id);
+     
     } catch (err) {
       console.log(err);
       return res.status(500).send(err);
