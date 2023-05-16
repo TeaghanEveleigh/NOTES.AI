@@ -5,7 +5,8 @@ const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const mongoose = require('mongoose');
 const User = require('./models/user');
-const Note = require('./models/note') // Import the User model or replace it with your own
+const Note = require('./models/note'); // Import the User model or replace it with your own
+const note = require('./models/note');
 
 const app = express();
 
@@ -214,11 +215,40 @@ app.get("/edit/:objectid", async function(req, res) {
       return res.status(404).send("No note found");
     }
     // Only render the page if a note is found
-    res.render("edit", {title: note.title, text: note.content});
+    res.render("edit", {title: note.title, text: note.content,id:note._id});
   } catch (err) {
     console.log(err);
     // Consider sending an error response or rendering an error page
     return res.status(500).send(err);
+  }
+});
+app.post("/edit/:id",async function(req,res){
+  let id = req.params.id;
+  try {
+    const note = await Note.findById(id);
+    if (!note) {
+      console.log("No note found with the given id");
+      // Consider sending a 404 response or rendering a not-found page
+      return res.status(404).send("No note found");
+    }
+    // Only render the page if a note is found
+  } catch (err) {
+    console.log(err);
+    // Consider sending an error response or rendering an error page
+    return res.status(500).send(err);
+  }
+  if (req.body.action === 'generate_ai') {
+    console.log("WE ARE USING AI");
+    generateText(prompts, function(err, generatedText) {
+      if (err) {
+        console.error(err);
+        res.status(500).send("An error occurred while generating text.");
+      } else {
+        console.log(generatedText);
+        prompts = generatedText;
+        res.render("edit", { title: note.title, generatedText: note.content+prompts });
+      }
+    });
   }
 });
 

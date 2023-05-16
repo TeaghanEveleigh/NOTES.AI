@@ -31,7 +31,7 @@
 <body>
     <div class="note-container">
         <h1>Compose</h1>
-        <form action="/edit" method="post">
+        <form action="/edit/<%= id %>" method="post">
             <div class="mb-3">
                 <label for="exampleFormControlInput1" class="form-label">Title</label>
                 <input type="text" name="titleOfPost" autocomplete="off" class="form-control" id="exampleFormControlInput1" value="<%=title%>">
