@@ -224,6 +224,7 @@ app.get("/edit/:objectid", async function(req, res) {
 });
 app.post("/edit/:id",async function(req,res){
   let id = req.params.id;
+  let prompts = req.body.Prompt;
   try {
     const note = await Note.findById(id);
     if (!note) {
@@ -239,18 +240,19 @@ app.post("/edit/:id",async function(req,res){
   }
   if (req.body.action === 'generate_ai') {
     console.log("WE ARE USING AI");
-    generateText(req.body.Prompt, async function(err, generatedText) {
+    generateText(prompts, async function(err, generatedText) {
       if (err) {
         console.error(err);
         res.status(500).send("An error occurred while generating text.");
       } else {
-        console.log(generatedText);
-        prompts = generatedText;
-         note.content = note.content+prompts
-         await note.save();
-         res.redirect("/edit/"+note._id);
+        
         
       }
+      console.log(generatedText);
+        prompts = generatedText;
+         note.content = note.content+prompts
+          note.save();
+         res.redirect("/edit/"+note._id);
     });
   }
 });
