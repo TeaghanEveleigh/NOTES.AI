@@ -299,7 +299,7 @@ button{
   background-color: var(--background-color)!important;
 }
 .icon-bar{
-  color: white;
+  color: white!important;
 }
 .navbar-default .navbar-toggle .icon-bar {
   background-color: white;
