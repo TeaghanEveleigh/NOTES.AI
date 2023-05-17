@@ -273,7 +273,10 @@ app.post("/edit/:id", async function(req,res){
   }
 });
 ///mongodb+srv://teaghan:peopleeat8Apples@notesai.byyoqhf.mongodb.net/NOTESAI?retryWrites=true&w=majority
+app.get("/Get-started",function(req,res){
+    res.render("start");
 
+})
 
 
 
