@@ -304,6 +304,16 @@ button{
 .navbar-default .navbar-toggle .icon-bar {
   background-color: white!important;
 }
+.btn-secondary {
+  background: none; /* Removes background color */
+  border: 1px solid rgb(255, 255, 255)!important; /* Adds a black border */
+  color: rgb(255, 255, 255)!important; /* Sets the text color to black */
+}
+}
+.btn-secondary {
+  background: none; /* Removes background color */
+  border: 1px solid black; /* Adds a black border */
+  color: black; /* Sets the text color to black */
 }
 
 
