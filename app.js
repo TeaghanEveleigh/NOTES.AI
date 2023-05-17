@@ -277,6 +277,10 @@ app.get("/Get-started",function(req,res){
     res.render("start");
 
 })
+app.get("/contact",function(req,res){
+  res.render("contact");
+
+})
 
 
 
