@@ -7,52 +7,6 @@
   <title>Notes.ai</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <link rel="stylesheet" href="/css/styles.css">
-  <style>
-    body {
-      background-color: #f8f8f8;
-    }
-
-    .navbar {
-      background-color: #ffffff;
-      border-color: #ddd;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-
-    .navbar-brand {
-      font-size: 24px;
-      font-weight: bold;
-    }
-
-    .form-container {
-      max-width: 400px;
-      margin: 50px auto;
-      padding: 20px;
-      background-color: #ffffff;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-
-    .form-container h2 {
-      font-size: 28px;
-      margin-bottom: 30px;
-      text-align: center;
-    }
-
-    .form-group label {
-      font-weight: bold;
-    }
-
-    .btn-primary {
-      background-color: #007bff;
-      border-color: #007bff;
-    }
-
-    .btn-secondary {
-      background-color: #6c757d;
-      border-color: #6c757d;
-    }
-  </style>
 </head>
 
 <body>
@@ -63,12 +17,14 @@
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>                        
         </button>
         <a class="navbar-brand" href="#">NOTES.AI</a>
       </div>
       <div class="collapse navbar-collapse" id="myNavbar">
         <ul class="nav navbar-nav navbar-right">
+          <!-- 6 -->
+          
           <li id="about"><a href="/about">ABOUT US</a></li>
           <li id="contact"><a href="/contact">CONTACT US</a></li>
         </ul>
@@ -77,22 +33,25 @@
   </nav>
 
   <div class="container">
-    <div class="form-container">
-      <h2>Signup</h2>
-      <form action="/signup" method="POST">
-        <div class="form-group">
-          <label for="email">Email:</label>
-          <input type="email" class="form-control" id="email" name="email" required>
-        </div>
-        <div class="form-group">
-          <label for="password">Password:</label>
-          <input type="password" class="form-control" id="password" name="password" required>
-        </div>
-        <button type="submit" class="btn btn-primary">Signup</button>
-        <a href="/login" class="btn btn-secondary">Already have an account?</a>
-      </form>
-    </div>
+    <!-- Rest of the page content -->
   </div>
+<body>
+    <div class="container">
+        <h2>Signup</h2>
+        <form action="/signup" method="POST">
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Signup</button>
+            <a href="/login" class="btn btn-secondary">Already have an account?</a>
+        </form>
+        
+    </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <!-- Bootstrap JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
