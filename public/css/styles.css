@@ -316,7 +316,6 @@ button{
   color: black;
    /* Sets the text color to black */
 }
-
 body {
   font-family: Arial, sans-serif;
 }
@@ -330,7 +329,7 @@ body {
 
 .card-item {
   background: white;
-  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 2);
   margin: 20px;
   padding: 20px;
   width: 200px;
@@ -338,12 +337,13 @@ body {
 }
 
 .card-item:hover {
-  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 2.5);
 }
 
 .button-container {
   display: flex;
   justify-content: center;
+  margin-top: 20px;
 }
 
 .action-btn {
@@ -365,7 +365,6 @@ body {
   color: black; 
   border: 2px solid #4CAF50;
 }
-
 
 
 
