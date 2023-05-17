@@ -316,11 +316,7 @@ button{
   color: black;
    /* Sets the text color to black */
 }
-.container {
-  background-color: white;
-  color: #333;
-  font-size: 16px;
-}
+
 
 .carousel {
   width: 100%;
