@@ -291,6 +291,14 @@ button{
 /* ... existing css ... */
 
 @media (prefers-color-scheme: dark) {
+  .sort-container {
+    background-color: #202020;
+  }
+
+  #sort-options {
+    background-color: #202020;
+    color: white;
+  }
   :root {
     --text-color: #ffffff!important;
     --li-color:#ffffff;
@@ -418,6 +426,18 @@ p {
       top: 0;
       z-index: 100; /* this ensures the navbar is always on top of other content */
     }
+    .sort-container {
+      position: absolute;
+      right: 0;
+      padding: 20px;
+  }
+  #sort-options {
+      border: 1px solid #ccc;
+      font-size: 16px;
+      padding: 5px 10px;
+      border-radius: 5px;
+  }
+  
 
 
 

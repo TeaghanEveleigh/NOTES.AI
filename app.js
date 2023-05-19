@@ -223,7 +223,9 @@ app.get("/edit/:objectid", async function(req, res) {
   }
 });
 app.post("/edit/:id", async function(req,res){
-
+  let date = new Date();
+  let options = { weekday: 'short', day: 'numeric', month: 'long' };
+  let formattedDate = date.toLocaleDateString('en-US', options);
   let id = req.params.id;
   let note;
   try {
@@ -248,10 +250,11 @@ app.post("/edit/:id", async function(req,res){
         console.error(err);
         return res.status(500).send("An error occurred while generating text.");
       }
-
+      
       console.log(generatedText);
       prompts = generatedText;
       note.content = req.body.contentOfPost + prompts;
+    
       try {
         await note.save();
         res.redirect("/edit/"+note._id);
@@ -261,6 +264,7 @@ app.post("/edit/:id", async function(req,res){
       }
     });
   } else{
+    note.date = formattedDate;
     note.content = req.body.contentOfPost
     try {
       await note.save();
@@ -419,3 +423,42 @@ app.get('/logout', (req, res) => {
 });
 
 // ...
+app.post("/sort", function(req, res){
+  let sortOption = req.body['sort-option'];
+
+  if (req.session.userId) {
+    User.findById(req.session.userId)
+      .populate('posts')
+      .exec()
+      .then(user => {
+        if (!user) {
+          throw new Error('User not found');
+        }
+
+        if (sortOption === "date"){
+          // sort by date (newest first)
+          user.posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+        } else if (sortOption === "date-oldest"){
+          // sort by date (oldest first)
+          user.posts.sort((a, b) => new Date(a.date) - new Date(b.date));
+        } else if (sortOption === "title"){
+          // sort by title A-Z
+          user.posts.sort((a, b) => a.title.localeCompare(b.title));
+        } else if (sortOption === "title-reverse"){
+          // sort by title Z-A
+          user.posts.sort((a, b) => b.title.localeCompare(a.title));
+        }
+
+        res.render("home", { posts: user.posts });
+      })
+      .catch(err => {
+        console.error(err);
+        res.status(500).send("An error occurred.");
+      });
+  } else {
+    res.redirect('/login');
+  }
+});
+
+
+

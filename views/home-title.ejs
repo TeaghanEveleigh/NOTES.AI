@@ -11,10 +11,8 @@
         <form id="sort-form" method="post" action="/sort">
             <select id="sort-options" name="sort-option" onchange="document.getElementById('sort-form').submit();">
                 <option value="">Sort By...</option>
-                <option value="title-reverse">Title A-Z</option>
-                <option value="date-oldest">Last edited</option>
-                <option value="title">Title Z-A</option>
-                <option value="date">Oldest edited</option>
+                <option value="title">Title</option>
+                <option value="date">Last edited</option>
             </select>
         </form>
     </div>
@@ -24,7 +22,7 @@
             <a href="/compose">+</a>
         </div>
         
-        <% posts.slice().reverse().forEach(element => { %>
+        <% posts.slice().sort((a, b) => a.title.localeCompare(b.title)).forEach(element => { %>
             <!-- Individual Post -->
             <div class="post" data-id="<%=element._id%>" data-url="/<%=element._id%>">
                 <form id="form-<%=element._id%>" method="post" action="/">
