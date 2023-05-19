@@ -68,15 +68,15 @@
                 <input id="title" type="text" name="titleOfPost" autocomplete="off" class="form-control" id="exampleFormControlInput1" value="<%=title%>">
             </div>
             <div class="form-group">
-                <label for="exampleFormControlInput1">AiPrompts!</label>
+                <label for="exampleFormControlInput1">Ask our AI</label>
                 <input id="prompt" type="text" name="Prompt" autocomplete="off" class="form-control" id="exampleFormControlInput1" >
             </div>
             <div class="mb-3">
-                <label for="exampleFormControlTextarea1" class="form-label">edit your note!</label>
+                <label for="exampleFormControlTextarea1" class="form-label">edit note</label>
                 <textarea class="form-control" id="exampleFormControlTextarea1" rows="10" name="contentOfPost" autocomplete="off" required><%= text %></textarea>
             </div>
             <button class="btn btn-primary mt-5" type="submit" name="action" value="create">Save</button>
-            <button id="myButton" class="btn btn-secondary" type="submit" name="action" value="generate_ai">Generate AI</button>
+            <button id="myButton" class="btn btn-secondary" type="submit" name="action" value="generate_ai">Ask AI</button>
         </form>
     </div>
     <!-- jQuery -->
