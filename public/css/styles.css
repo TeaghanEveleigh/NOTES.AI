@@ -1,22 +1,23 @@
-.container-fluid {
+ /* .container-fluid {
     padding-top: 70px;
     padding-bottom: 70px;
-}
-.navbar {
-    padding-top: 15px;
-    padding-bottom: 15px;
+}  */
+ .navbar {
+    /* padding-top: 5px;
+    padding-bottom: 5px; */
     border: 0;
     border-radius: 0;
     margin-bottom: 0;
-    font-size: 12px;
-    letter-spacing: 5px;
+    font-size: 15px;
+    
 }
-.navbar-nav  li a:hover {
+
+/* .navbar-nav  li a:hover {
     color: rgb(77, 77, 192) ;
     background: rgb(77, 77, 192);
    
     
-}
+} */
 
 .footer-padding {
 	padding-bottom: 60px;
@@ -188,7 +189,7 @@ button{
     content: '';
     display: block;
     width: 0;
-    height: 2px;
+    height: 3px;
     background: rgb(77, 77, 192);
     transition: width .3s, left .3s;
     position: absolute;
@@ -196,10 +197,10 @@ button{
     left: 50%;
   }
   
-  .navbar-nav li a:hover::after {
+   .navbar-nav li a:hover::after {
     width: 100%;
     left: 0;
-  }
+  } 
   
   .navbar-nav li a:not(:hover)::after {
     transition: 0s;
@@ -228,7 +229,7 @@ button{
     }
 }
 .titleofpage{
-  margin-left: 35px!important;
+  margin-left: 5px!important;
 }
 /* Position the icons and text */
 /* Position the icons and text */
@@ -287,38 +288,63 @@ button{
 }  
 
 
+/* ... existing css ... */
+
 @media (prefers-color-scheme: dark) {
-:root {
-  --text-color: #f0f0f0!important;
-  --background-color: #202020!important;
+  :root {
+    --text-color: #ffffff!important;
+    --li-color:#ffffff;
+    --background-color: #202020;
+    --button-border-color: #ffffff;
+    --button-text-color: #ffffff;
+    --navbar-color: #1f1f1f;
+    --post-background-color: #2a2a2a;
+    --footer-background-color: #1a1a1a;
+  }
+
+  body,
+  .navbar,
+  .footer,
+  .post,
+  .plus-button {
+    color: var(--text-color);
+    background-color: var(--background-color);
+  }
+
+  .navbar {
+    background-color: var(--navbar-color);
+  }
+
+  .post,
+  .plus-button {
+    background-color: var(--post-background-color);
+  }
+
+  .footer {
+    background-color: var(--footer-background-color);
+  }
+
+  .btn-secondary {
+    background: none;
+    border: 1px solid var(--button-border-color);
+    color: var(--button-text-color);
+  }
+  .btn-secondary {
+    background: none; /* Removes background color */
+    border: 1px solid rgb(255, 255, 255); /* Adds a black border */
+    color: rgb(255, 255, 255);
+     /* Sets the text color to black */
+  }
+
+  .navbar .navbar-toggle .icon-bar {
+    background-color: var(--button-text-color);
+  }
 }
 
 
-*{
-  color: var(--text-color)!important;
-  background-color: var(--background-color)!important;
-}
-.icon-bar{
-  color: white!important;
-}
-.navbar-default .navbar-toggle .icon-bar {
-  background-color: white!important;
-}
-.btn-secondary {
-  background: none; /* Removes background color */
-  border: 1px solid rgb(255, 255, 255)!important; /* Adds a black border */
-  color: rgb(255, 255, 255)!important; /* Sets the text color to black */
-}
-}
-.btn-secondary {
-  background: none; /* Removes background color */
-  border: 1px solid black; /* Adds a black border */
-  color: black;
-   /* Sets the text color to black */
-}
 
 
-.carousel {
+/* .carousel {
   width: 100%;
   margin: auto;
 }
@@ -369,7 +395,7 @@ p {
 .btn {
   margin-right: 10px;
   margin-bottom: 20px;
-}
+} */
 
 @media (max-width: 768px) {
   .col-sm-12 {
@@ -381,7 +407,12 @@ p {
     width: 100%;
     margin-bottom: 10px;
   }
-}
+} 
+
+    .note-container{
+      border-radius: 8px;
+    }
+
 
 
 

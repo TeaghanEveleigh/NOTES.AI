@@ -1,5 +1,36 @@
 <%- include("partials/header") %>
 <style>
+    @media (prefers-color-scheme: dark) {
+    
+
+    .note-container {
+        background-color: #2a2a2a!important;
+        color: #FFF;
+    }
+
+    .form-group {
+        background-color: #2a2a2a;
+        color: #FFF;
+    }
+
+    .form-control {
+        background-color: #555;
+        color: #FFF;
+        border: 1px solid #666;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+        color: #FFF;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        border-color: #6c757d;
+        color: #FFF;
+    }
+}
     .note-container {
         width: 80%;
         max-width: 800px;
@@ -34,21 +65,37 @@
         <form action="/compose" method="post">
             <div class="mb-3">
                 <label for="exampleFormControlInput1" class="form-label">Title</label>
-                <input type="text" name="titleOfPost" autocomplete="off" class="form-control" id="exampleFormControlInput1" value="<%=title%>">
+                <input id="title" type="text" name="titleOfPost" autocomplete="off" class="form-control" id="exampleFormControlInput1" value="<%=title%>">
             </div>
             <div class="form-group">
                 <label for="exampleFormControlInput1">AiPrompts!</label>
-                <input type="text" name="Prompt" autocomplete="off" class="form-control" id="exampleFormControlInput1" >
+                <input id="prompt" type="text" name="Prompt" autocomplete="off" class="form-control" id="exampleFormControlInput1" >
             </div>
             <div class="mb-3">
                 <label for="exampleFormControlTextarea1" class="form-label">your note!</label>
                 <textarea class="form-control" id="exampleFormControlTextarea1" rows="10" name="contentOfPost" autocomplete="off" required><%= generatedText %></textarea>
             </div>
             <button class="btn btn-primary mt-5" type="submit" name="action" value="create">Create</button>
-            <button class="btn btn-secondary" type="submit" name="action" value="generate_ai">Generate AI</button>
+            <button id="myButton" class="btn btn-secondary" type="submit" name="action" value="generate_ai">Generate AI</button>
         </form>
     </div>
     <!-- jQuery -->
+    <script>
+        var myButton = document.getElementById('myButton');
+        var titleInput = document.getElementById('title');
+        var promptInput = document.getElementById('prompt');
+        var dotsCount = 0;
+        var message = 'AI typing';
+        
+        myButton.addEventListener('click', function() {
+            if (titleInput.value && promptInput.value) {  // check if both fields are filled in
+                setInterval(function() {
+                    dotsCount = (dotsCount + 1) % 4; // cycle from 0, 1, 2, 3, then back to 0
+                    myButton.innerHTML = message + '.'.repeat(dotsCount); // append dots to message
+                }, 500); // change text every 500ms
+            }
+        });
+        </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <!-- Bootstrap JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
