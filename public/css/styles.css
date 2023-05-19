@@ -413,7 +413,11 @@ p {
       border-radius: 8px;
     }
 
-
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100; /* this ensures the navbar is always on top of other content */
+    }
 
 
 
