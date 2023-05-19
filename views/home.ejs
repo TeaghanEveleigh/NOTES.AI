@@ -20,9 +20,9 @@
     </div>
 </div>
     <div id="posts-container">
-        <div class="plus-button">
+        <div class="plus-button" onclick="window.location.href='/compose'">
             <a href="/compose">+</a>
-        </div>
+          </div>
         
         <% posts.slice().reverse().forEach(element => { %>
             <!-- Individual Post -->
@@ -58,7 +58,7 @@
                 <h2 class="post-title"><%= element.title %></h2>
                 <p class="post-text"><%= element.content.slice(0,35) %></p>
                 <a href="/post/<%=element.title%>" class="read-more">Read More</a>
-                <p class="post-date"><%=element.date%></p>
+                <p class="post-date">LAST EDITED: <%=element.date%></p>
             </div>
         <%  });  %>
     </div>

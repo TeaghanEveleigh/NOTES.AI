@@ -81,6 +81,16 @@
     </div>
     <!-- jQuery -->
     <script>
+        document.querySelector('form').addEventListener('submit', function(event) {
+  const overlay = document.createElement('div');
+  overlay.style.position = 'fixed';
+  overlay.style.top = 0;
+  overlay.style.right = 0;
+  overlay.style.bottom = 0;
+  overlay.style.left = 0;
+  overlay.style.backgroundColor = 'rgba(0, 0, 0, 0)';
+  document.body.appendChild(overlay);
+});
         var myButton = document.getElementById('myButton');
         var titleInput = document.getElementById('title');
         var promptInput = document.getElementById('prompt');
