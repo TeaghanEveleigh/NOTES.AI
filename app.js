@@ -63,7 +63,7 @@ app.post("/compose", function(req, res) {
   let date = new Date();
   let options = { weekday: 'short', day: 'numeric', month: 'long' };
   let formattedDate = date.toLocaleDateString('en-US', options);
-  let reqbody="";
+  let reqbody=" ";
   if(req.body.contentOfPost){
     reqbody=req.body.contentOfPost;
   }
