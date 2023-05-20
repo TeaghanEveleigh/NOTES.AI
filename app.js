@@ -72,7 +72,7 @@ app.post("/compose", function(req, res) {
   };
 
   // Validation
-  if (!post.title || !post.content&&!post.prompt) {
+  if (!post.title || (!post.content && !post.prompt)) {
     //return res.status(400).send('Invalid post data');
     res.redirect("/compose");
   }
