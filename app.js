@@ -100,7 +100,7 @@ app.post("/compose", function(req, res) {
     // Create a new note
     const newNote = new Note({
       user: userId,
-      content: post.content,
+      content: ""+post.content,
       date: post.date,
       title: post.title
     });
