@@ -464,6 +464,30 @@ app.post("/sort", function(req, res){
 app.get("/contact",function(req,res){
   res.render("contact");
 })
+app.post('/search', function(req, res) {
+  var searchTerm = req.body.searchvalue;
+
+  if (req.session.userId) {
+    User.findById(req.session.userId)
+      .populate('posts')
+      .exec()
+      .then(user => {
+        if (!user) {
+          throw new Error('User not found');
+        }
+
+        let searchResults = user.posts.filter(post => post.title.toLowerCase().includes(searchTerm.toLowerCase()));
+
+        res.render('home', { posts: searchResults });
+      })
+      .catch(err => {
+        console.error(err);
+        res.status(500).send("An error occurred.");
+      });
+  } else {
+    res.redirect('/login');
+  }
+});
 
 
 

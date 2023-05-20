@@ -4,57 +4,84 @@
     display: flex;
 }
 /* General styles */
-.search-form {
+.search-form-container {
     display: flex;
     justify-content: center;
-    margin-bottom: 20px;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    max-width: 50%;  /* Limit the width to half of the screen */
+    margin: 20px auto;  /* Vertically center the search form and results and add margins */
+}
+
+.search-form {
+    display: flex; 
+    justify-content: space-between;
+    width: 100%;
 }
 
 .search-input {
-    padding: 10px;
-    font-size: 1rem;
-    flex-grow: 1; /* Allows the input to grow to take up available space */
+    flex-grow: 1;  /* Makes the input take up the remaining space */
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
 }
 
 .search-button {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #ddd;
+    cursor: pointer;
+    margin-left: 10px;  /* Separates the button from the input */
+}
+
+.search-results {
+    position: relative;
+    top: 20px;
+    background-color: #f8f8f8;
     padding: 10px;
-    font-size: 1rem;
-    margin-left: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: 100%;
+    display: none;
+    z-index: 1000;
+    box-sizing: border-box;
 }
-
-/* Make the search bar and button larger on desktop */
-@media screen and (min-width: 768px) {
-    .search-input {
-        font-size: 1.5rem;
-    }
-
-    .search-button {
-        font-size: 1.5rem;
-    }
-}
-
-/* Dark mode styles */
 @media (prefers-color-scheme: dark) {
-    
-
     .search-input {
-        background-color: #555;
+        background-color: #444;
         color: #fff;
+        border-color: #888;
     }
 
     .search-button {
         background-color: #555;
         color: #fff;
+        border-color: #888;
+    }
+
+    .search-results {
+        background-color: #555;
+        color: #fff;
+        border-color: #888;
+    }
+
+    .search-results div:hover {
+        background-color: #666;
     }
 }
+
 
 </style>
 <body>
-    <div class="container">
-        <form action="/search" method="get" class="search-form">
-            <input type="text" id="search-bar" name="query" placeholder="Search..." class="search-input">
+    <div class="search-form-container">
+        <form action="/search" method="post" class="search-form">
+            <input type="text" id="search-bar" name="searchvalue" placeholder="Search..." class="search-input">
             <button type="submit" class="search-button">Search</button>
         </form>
+        <div id="search-results" class="search-results"></div>
+    </div>
     </div>
     <div class="conatainer top-things">
     <h1 class="titleofpage">Your Notes</h1>
@@ -138,6 +165,37 @@
         console.error('There has been a problem with your fetch operation:', error);
     });
 }
+let posts = JSON.parse('<%- JSON.stringify(posts) %>'); // now posts is available in client-side JS
+let searchBar = document.getElementById('search-bar');
+let searchResults = document.getElementById('search-results');
+
+searchBar.addEventListener('input', function(e) {
+    let searchQuery = e.target.value.toLowerCase();
+    searchResults.innerHTML = ''; // Clear out any old results
+
+    if (searchQuery) {
+        let results = posts.filter(post => post.title.toLowerCase().includes(searchQuery));
+        results.forEach(result => {
+            let resultElement = document.createElement('div');
+            resultElement.textContent = result.title;
+            // update the search bar value when a result is clicked
+            resultElement.addEventListener('click', function() {
+                searchBar.value = result.title;
+                searchBar.dispatchEvent(new Event('input')); // dispatch input event manually
+            });
+            searchResults.appendChild(resultElement);
+        });
+        if (results.length) {
+            searchResults.style.display = 'block'; // show the search results
+        } else {
+            searchResults.style.display = 'none'; // hide the search results
+        }
+    } else {
+        searchResults.style.display = 'none'; // hide the search results
+    }
+});
+
+
     </script>
 </body>
 <%- include("partials/footer") %>
