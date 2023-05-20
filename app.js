@@ -63,7 +63,10 @@ app.post("/compose", function(req, res) {
   let date = new Date();
   let options = { weekday: 'short', day: 'numeric', month: 'long' };
   let formattedDate = date.toLocaleDateString('en-US', options);
-  
+  let reqbody="";
+  if(req.body.contentOfPost){
+    reqbody=req.body.contentOfPost;
+  }
   let post = {
     title: req.body.titleOfPost,
     content: req.body.contentOfPost,
@@ -73,24 +76,27 @@ app.post("/compose", function(req, res) {
 
   // Validation
   if (!post.title || (!post.content && !post.prompt)) {
-    if (!post.content && post.prompt) {
-      // Only post.prompt is present, so it's valid
-      console.log("WE ARE USING AI");
-      generateText(post.prompt, function(err, generatedText) {
-        if (err) {
-          console.error(err);
-          res.status(500).send("An error occurred while generating text.");
-        } else {
-          console.log(generatedText);
-          post.prompt = generatedText;
-          res.render("ai-page", { title: post.title, generatedText: post.content + post.prompt });
-        }
-      });
-    } else {
-      // Both post.content and post.prompt are empty, so it's invalid
-      res.redirect("/compose");
+    //return res.status(400).send('Invalid post data');
+    res.redirect("/compose");
+  }
+
+  if (req.body.action === 'generate_ai') {
+    console.log("WE ARE USING AI");
+    generateText(post.prompt, function(err, generatedText) {
+      if (err) {
+        console.error(err);
+        res.status(500).send("An error occurred while generating text.");
+      } else {
+        console.log(generatedText);
+        post.prompt = generatedText;
+        res.render("ai-page", { title: post.title, generatedText: post.content+post.prompt });
+      }
+    });
+  } else {
+    // Check if session exists and has userId
+    if (!req.session || !req.session.userId) {
+      return res.status(401).send('Unauthorized');
     }
-  
 
     const userId = req.session.userId ;
 
