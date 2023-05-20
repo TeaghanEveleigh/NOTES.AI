@@ -3,12 +3,57 @@
 .top-things{
     display: flex;
 }
+/* General styles */
+.search-form {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.search-input {
+    padding: 10px;
+    font-size: 1rem;
+    flex-grow: 1; /* Allows the input to grow to take up available space */
+}
+
+.search-button {
+    padding: 10px;
+    font-size: 1rem;
+    margin-left: 10px;
+}
+
+/* Make the search bar and button larger on desktop */
+@media screen and (min-width: 768px) {
+    .search-input {
+        font-size: 1.5rem;
+    }
+
+    .search-button {
+        font-size: 1.5rem;
+    }
+}
+
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+    
+
+    .search-input {
+        background-color: #555;
+        color: #fff;
+    }
+
+    .search-button {
+        background-color: #555;
+        color: #fff;
+    }
+}
+
 </style>
 <body>
     <div class="container">
-        <form action="/search" method="get">
-            <input type="text" id="search-bar" name="query" placeholder="Search...">
-            <button type="submit">Search</button>
+        <form action="/search" method="get" class="search-form">
+            <input type="text" id="search-bar" name="query" placeholder="Search..." class="search-input">
+            <button type="submit" class="search-button">Search</button>
         </form>
     </div>
     <div class="conatainer top-things">
