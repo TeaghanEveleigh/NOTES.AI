@@ -350,12 +350,12 @@ app.post('/login', async (req, res) => {
 
     // Check if the user exists
     if (!user) {
-      return res.render('login');
+      return res.render('login', { error: 'Invalid username or password' });
     }
 
     // Check if the provided password matches the stored password
     if (password !== user.password) {
-      return res.render('login');
+      return res.render('login', { error: 'Invalid username or password' });
     }
 
     // Store the user ID in the session
@@ -365,9 +365,10 @@ app.post('/login', async (req, res) => {
     res.redirect('/');
   } catch (err) {
     console.log(err);
-    res.status(500).render('login');
+    res.status(500).render('login', { error: 'An error occurred' });
   }
 });
+
 
 
 // Render the signup page
@@ -383,7 +384,7 @@ app.post('/signup', async (req, res) => {
     // Check if the user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.redirect('/signup');
+      return res.render('signup', { error: 'User already exists: try another username or login' });
     }
 
     // Create a new user
@@ -397,9 +398,10 @@ app.post('/signup', async (req, res) => {
     res.redirect('/');
   } catch (err) {
     console.log(err);
-    res.status(500).render('signup');
+    res.status(500).render('signup', { error: 'An error occurred' });
   }
 });
+
 
 
 // Render the dashboard page
@@ -459,6 +461,9 @@ app.post("/sort", function(req, res){
     res.redirect('/login');
   }
 });
+app.get("/contact",function(req,res){
+  res.render("contact");
+})
 
 
 
