@@ -10,7 +10,7 @@ const note = require('./models/note');
 
 const app = express();
 
-mongoose.connect(/*process.env.MONGODB_URI*/"mongodb+srv://teaghan:peopleeat8Apples@notesai.byyoqhf.mongodb.net/NOTESAI?retryWrites=true&w=majority", { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Database connected successfully'))
   .catch(err => console.log(err));
 
