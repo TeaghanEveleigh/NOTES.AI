@@ -69,7 +69,7 @@ app.post("/compose", function(req, res) {
   }
   let post = {
     title: req.body.titleOfPost,
-    content: req.body.contentOfPost,
+    content: reqbody,
     date: formattedDate,
     prompt:req.body.Prompt
   };
