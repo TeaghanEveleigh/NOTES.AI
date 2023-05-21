@@ -7,7 +7,8 @@ const mongoose = require('mongoose');
 const User = require('./models/user');
 const Note = require('./models/note'); // Import the User model or replace it with your own
 const note = require('./models/note');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
+
 const saltRounds = 10;
 const app = express();
 
