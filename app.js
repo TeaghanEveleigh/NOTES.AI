@@ -7,7 +7,8 @@ const mongoose = require('mongoose');
 const User = require('./models/user');
 const Note = require('./models/note'); // Import the User model or replace it with your own
 const note = require('./models/note');
-
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 const app = express();
 
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -357,15 +358,22 @@ app.post('/login', async (req, res) => {
     }
 
     // Check if the provided password matches the stored password
-    if (password !== user.password) {
-      return res.render('login', { error: 'Invalid username or password' });
-    }
+    bcrypt.compare(password, user.password, (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).render('login', { error: 'An error occurred' });
+      }
 
-    // Store the user ID in the session
-    req.session.userId = user._id;
+      if (!result) {
+        return res.render('login', { error: 'Invalid username or password' });
+      }
 
-    // Redirect to the dashboard or desired page
-    res.redirect('/');
+      // Store the user ID in the session
+      req.session.userId = user._id;
+
+      // Redirect to the dashboard or desired page
+      res.redirect('/');
+    });
   } catch (err) {
     console.log(err);
     res.status(500).render('login', { error: 'An error occurred' });
@@ -380,6 +388,7 @@ app.get('/signup', (req, res) => {
 });
 
 // Handle signup form submission
+// Handle signup form submission
 app.post('/signup', async (req, res) => {
   const { email, password } = req.body;
 
@@ -390,15 +399,23 @@ app.post('/signup', async (req, res) => {
       return res.render('signup', { error: 'User already exists: try another username or login' });
     }
 
-    // Create a new user
-    const newUser = new User({ email, password });
-    await newUser.save();
+    // Hash the password before storing it
+    bcrypt.hash(password, saltRounds, async (err, hashedPassword) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).render('signup', { error: 'An error occurred' });
+      }
 
-    // Store the user ID in the session
-    req.session.userId = newUser._id;
+      // Create a new user with the hashed password
+      const newUser = new User({ email, password: hashedPassword });
+      await newUser.save();
 
-    // Redirect to the dashboard or desired page
-    res.redirect('/');
+      // Store the user ID in the session
+      req.session.userId = newUser._id;
+
+      // Redirect to the dashboard or desired page
+      res.redirect('/');
+    });
   } catch (err) {
     console.log(err);
     res.status(500).render('signup', { error: 'An error occurred' });
