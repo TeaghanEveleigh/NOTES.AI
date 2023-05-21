@@ -459,7 +459,7 @@ app.post("/sort", function(req, res){
 app.get("/contact",function(req,res){
   res.render("contact");
 })
-app.post('/', function(req, res) {
+app.post('/search', function(req, res) {
   var searchTerm = req.body.searchvalue;
 
   if (req.session.userId) {
