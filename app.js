@@ -417,15 +417,7 @@ app.get('/', function(req, res) {
 });
 
 // Logout route
-app.get('/logout', (req, res) => {
-  // Clear the session data
-  req.session.destroy((err) => {
-    if (err) {
-      console.log(err);
-    }
-    res.redirect('/login');
-  });
-});
+
 
 // ...
 app.post("/sort", function(req, res){
