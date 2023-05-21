@@ -35,7 +35,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get("/", function(req, res){
+app.get("/",requireLogin, function(req, res){
   if (req.session.userId) {
     User.findById(req.session.userId)
       .populate('posts')
@@ -55,11 +55,11 @@ app.get("/", function(req, res){
   }
 });
 
-app.get("/compose", function(req, res){
+app.get("/compose",requireLogin, function(req, res){
   res.render("compose");
 });
 
-app.post("/compose", function(req, res) {
+app.post("/compose",requireLogin, function(req, res) {
   let date = new Date();
   let options = { weekday: 'short', day: 'numeric', month: 'long' };
   let formattedDate = date.toLocaleDateString('en-US', options);
@@ -138,7 +138,7 @@ app.post("/compose", function(req, res) {
 
 
 
-app.get("/post/:title", function(req, res) {
+app.get("/post/:title",requireLogin, function(req, res) {
   let title = req.params.title;
   console.log(title);
 
@@ -207,7 +207,7 @@ app.post("/", function(req, res) {
     // Handle other actions
   }
 });
-app.get("/edit/:objectid", async function(req, res) {
+app.get("/edit/:objectid",requireLogin, async function(req, res) {
   let id = req.params.objectid;
 
   try {
@@ -225,7 +225,7 @@ app.get("/edit/:objectid", async function(req, res) {
     return res.status(500).send(err);
   }
 });
-app.post("/edit/:id", async function(req,res){
+app.post("/edit/:id",requireLogin, async function(req,res){
   let date = new Date();
   let options = { weekday: 'short', day: 'numeric', month: 'long' };
   let formattedDate = date.toLocaleDateString('en-US', options);
@@ -483,6 +483,19 @@ app.post('/search', function(req, res) {
     res.redirect('/login');
   }
 });
-
+function redirectHomeIfLoggedIn(req, res, next) {
+  if (req.session.userId) {
+    res.redirect('/');
+  } else {
+    next();
+  }
+}
+function requireLogin(req, res, next) {
+  if (!req.session.userId) {
+    res.redirect('/signup');
+  } else {
+    next();
+  }
+}
 
 
