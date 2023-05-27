@@ -1,7 +1,7 @@
 
 
 # NOTES.AI 
-
+https://notes-ai.herokuapp.com/Get-started
 NOTES.AI is a powerful web application that leverages artificial intelligence to generate user notes based on text input. It uses EJS for templating, MongoDB for data storage, and is hosted on Heroku. 
 
 ## Features
@@ -10,3 +10,4 @@ NOTES.AI is a powerful web application that leverages artificial intelligence to
 * **EJS Templating**: Uses EJS for efficient, dynamic, and interactive UI components.
 * **MongoDB Storage**: Securely stores user data and notes in MongoDB.
 * **Hosted on Heroku**: Easily accessible online as it's hosted on the Heroku platform.
+*
