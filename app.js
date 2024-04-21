@@ -91,7 +91,7 @@ app.post("/compose",requireLogin, function(req, res) {
       } else {
         console.log(generatedText);
         post.prompt = generatedText;
-        res.render("ai-page", { title: post.title, generatedText: post.content+post.prompt });
+        res.render("ai-page", { title: post.title, generatedText: generatedText }); 
       }
     });
   } else {
