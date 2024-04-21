@@ -5,7 +5,7 @@ function generateText(prompt, callback) {
     const data = JSON.stringify({
         'prompt': prompt,
         'max_tokens': 200,
-        'model': 'text-davinci-003'
+        'model': 'gpt-3.5-turbo'
     });
 
     const options = {
