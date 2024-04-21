@@ -5,13 +5,13 @@ function generateText(prompt, callback) {
     const data = JSON.stringify({
         'prompt': prompt,
         'max_tokens': 200,
-        'model': 'gpt-3.5-turbo'
+        'engine': 'davinci-codex' // Specify the engine instead of the model
     });
 
     const options = {
         hostname: 'api.openai.com',
         port: 443,
-        path: '/v1/engines/davinci-codex/completions', // Updated endpoint for Davinci Codex
+        path: '/v1/engines/davinci-codex/completions',
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
