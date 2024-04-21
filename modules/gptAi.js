@@ -1,4 +1,3 @@
-// gptApi.js
 const https = require('https');
 
 function generateText(prompt) {
@@ -20,7 +19,7 @@ function generateText(prompt) {
       headers: {
         'Content-Type': 'application/json',
         'Content-Length': data.length,
-        'Authorization': `Bearer ${process.env.GPT_AI_API_KEY}` // Replace with your API Key
+        'Authorization': `Bearer ${process.env.GPT_AI_API_KEY}`  
       }
     };
 
@@ -32,6 +31,9 @@ function generateText(prompt) {
       });
 
       res.on('end', () => {
+        const apiCallEndTime = Date.now(); 
+        console.log(`OpenAI API call took: ${apiCallEndTime - apiCallStartTime}ms`);
+
         if (res.statusCode === 200) {
           try {
             const result = JSON.parse(response);
@@ -43,6 +45,15 @@ function generateText(prompt) {
           reject(new Error(`API request failed with status code: ${res.statusCode}`));
         }
       });
+    });
+
+    const apiCallStartTime = Date.now(); // Start measuring time before the API call
+
+    req.setTimeout(15000); // Timeout after 15 seconds
+
+    req.on('timeout', () => {
+      req.destroy(); // Abort the request
+      reject(new Error('Timeout waiting for OpenAI response'));  
     });
 
     req.on('error', (error) => {
