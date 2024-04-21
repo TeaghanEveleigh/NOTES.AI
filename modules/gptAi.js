@@ -7,11 +7,11 @@ function generateText(prompt, callback) {
         'max_tokens': 200,
         'model': 'gpt-3.5-turbo'
     });
-
+    //options
     const options = {
         hostname: 'api.openai.com',
         port: 443,
-        path: '/v1/completions',
+        path: '/v1/chat/completions', // Update the endpoint here
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -19,6 +19,7 @@ function generateText(prompt, callback) {
             'Authorization': 'Bearer ' + process.env.GPT_AI_API_KEY
         }
     };
+    
 
     const req = https.request(options, (res) => {
         let response = '';
