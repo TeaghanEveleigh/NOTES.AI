@@ -1,3 +1,4 @@
+
 const session = require('express-session');
 const generateText = require('./modules/gptAi');
 const express = require("express");
@@ -61,61 +62,82 @@ app.get("/compose",requireLogin, function(req, res){
   res.render("compose");
 });
 
-app.post("/edit/:id", requireLogin, async function (req, res) {
+app.post("/compose",requireLogin, function(req, res) {
   let date = new Date();
   let options = { weekday: 'short', day: 'numeric', month: 'long' };
   let formattedDate = date.toLocaleDateString('en-US', options);
-  let id = req.params.id;
-  let note;  
+  let reqbody=" ";
+  if(req.body.contentOfPost){
+    reqbody=req.body.contentOfPost;
+  }
+  let post = {
+    title: req.body.titleOfPost,
+    content: reqbody,
+    date: formattedDate,
+    prompt:req.body.Prompt
+  };
 
-  try {
-    note = await Note.findById(id);
-    if (!note) {
-      console.log("No note found with the given id");
-      return res.status(404).send("No note found");
-    }
-  } catch (err) {
-    console.log(err);
-    return res.status(500).send(err);
+  // Validation
+  if (!post.title || (!post.content && !post.prompt)) {
+    //return res.status(400).send('Invalid post data');
+    res.redirect("/compose");
   }
 
   if (req.body.action === 'generate_ai') {
     console.log("WE ARE USING AI");
-    if (!req.body.Prompt) {
-      return res.status(400).send("No prompt provided in request.");
+    generateText(post.prompt, function(err, generatedText) {
+      if (err) {
+        console.error(err);
+        res.status(500).send("An error occurred while generating text.");
+      } else {
+        console.log(generatedText);
+        post.prompt = generatedText;
+        res.render("ai-page", { title: post.title, generatedText: post.content+post.prompt });
+      }
+    });
+  } else {
+    // Check if session exists and has userId
+    if (!req.session || !req.session.userId) {
+      return res.status(401).send('Unauthorized');
     }
 
-    try {
-      const generatedText = await generateText(req.body.Prompt);
-      console.log(generatedText);
+    const userId = req.session.userId ;
 
-      note.content = req.body.contentOfPost + generatedText;
-      await note.save();
+    // Create a new note
+    const newNote = new Note({
+      user: userId,
+      content: ""+post.content,
+      date: post.date,
+      title: post.title
+    });
 
-      // Redirect with a potential success message for the user
-      res.redirect("/edit/" + note._id + "?success=true"); 
-
-    } catch (err) {
-      console.error(err);
-
-      // Redirect with an error message
-      res.redirect("/edit/" + note._id + "?error=true"); 
+    newNote.save()
+  .then(savedNote => {
+    if (!savedNote) {
+      throw new Error('Failed to save note');
     }
-
-  } else {  // Handle regular note update
-    note.date = formattedDate;
-    note.content = req.body.contentOfPost;
-
-    try {
-      await note.save();
-      res.redirect("/");
-    } catch (err) {
-      console.log(err);
-      res.status(500).send(err);
+    // Retrieve the user
+    return User.findById(userId).exec().then(user => ({user, savedNote}));
+  })
+  .then(data => {
+    if (!data.user) {
+      throw new Error('User not found');
     }
+    data.user.posts.push(data.savedNote._id);
+    return data.user.save();
+  })
+  .then(user => {
+    if (!user) {
+      throw new Error('Failed to update user');
+    }
+    res.redirect("/");
+  })
+  .catch(err => {
+    console.error(err);
+    res.status(500).send("An error occurred.");
+  });
   }
 });
-
 
 
 
