@@ -65,6 +65,44 @@
             padding: 10px;
         }
     }
+    #ai-form {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 300px;
+        height: 300px;
+        border-radius: 50%;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #007bff;
+        color: #fff;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    #ai-form.open {
+        border-radius: 0;
+        width: 400px;
+        height: auto;
+        padding: 20px;
+    }
+    #ai-form.open .form-group {
+        display: block;
+    }
+    #ai-form .form-group {
+        display: none;
+    }
+    #ai-form .close-btn {
+        display: none;
+    }
+    #ai-form.open .close-btn {
+        display: block;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+    }
 </style>
 <body>
     <div class="container note-container">
@@ -75,24 +113,25 @@
                 <input id="title" type="text" name="titleOfPost" autocomplete="off" class="form-control" id="exampleFormControlInput1" required>
             </div>
             <div class="form-group">
-                <label for="exampleFormControlInput1">Ask our AI</label>
-                <div><input id="prompt" type="text" name="Prompt" autocomplete="off" class="form-control" id="exampleFormControlInput1" ><button id="myButton" class="btn btn-secondary" type="submit" name="action" value="generate_ai">Ask AI</button></div>
-                
-            </div>
-            <div class="form-group">
                 <label for="exampleFormControlTextarea1">New note</label>
                 <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" type="text" name="contentOfPost" autocomplete="off" ></textarea>
             </div>
             <div class="button-container">
                 <button class="btn btn-primary" type="submit" name="action" value="create">Create</button>
-                <button id="myButton" class="btn btn-secondary" type="submit" name="action" value="generate_ai">Ask AI</button>
             </div>
         </form>
+        <div id="ai-form">
+            <span class="close-btn">X</span>
+            <h2>Ask our AI</h2>
+            <div class="form-group">
+                <input id="prompt" type="text" name="Prompt" autocomplete="off" class="form-control" required>
+                <button id="myButton" class="btn btn-secondary" type="submit" name="action" value="generate_ai">Ask AI</button>
+            </div>
+        </div>
     </div>
-    <!-- Bootstrap JS -->
+    <!-- Include your scripts here -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <!-- Bootstrap JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script>
         var myButton = document.getElementById('myButton');
         var titleInput = document.getElementById('title');
@@ -134,6 +173,16 @@ button.click(function() {
 		
 	}
 })
+$(function() {
+            $("#ai-form").draggable();
+            $("#ai-form").click(function() {
+                $(this).addClass('open');
+            });
+            $(".close-btn").click(function(e) {
+                e.stopPropagation();
+                $("#ai-form").removeClass('open');
+            });
+        });
     </script>
 </body>
 <%- include("partials/footer") %>
