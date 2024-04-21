@@ -3,7 +3,16 @@ const https = require('https');
 
 function generateText(prompt, callback) {
     const data = JSON.stringify({
-        'prompt': prompt,
+        'messages': [
+            {
+                'role': 'system',
+                'content': 'You are a helpful assistant.'
+            },
+            {
+                'role': 'user',
+                'content': prompt
+            }
+        ],
         'max_tokens': 200,
         'engine': 'gpt-3.5-turbo' // Updated engine
     });
@@ -11,7 +20,7 @@ function generateText(prompt, callback) {
     const options = {
         hostname: 'api.openai.com',
         port: 443,
-        path: '/v1/engines/gpt-3.5-turbo/completions', // Updated path
+        path: '/v1/chat/completions', // Updated path
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -30,15 +39,13 @@ function generateText(prompt, callback) {
         res.on('end', () => {
             try {
                 const result = JSON.parse(response);
-                console.log(response);
-                console.log(result);
-                if (result.choices && result.choices[0] && result.choices[0].text) {
-                    callback(null, result.choices[0].text);
+                if (result.choices && result.choices[0] && result.choices[0].message && result.choices[0].message.content) {
+                    callback(null, result.choices[0].message.content);
                 } else {
                     callback(new Error('Unexpected API response format'));
                 }
-            } catch (error) {
-                callback(error);
+            } catch (err) {
+                callback(err);
             }
         });
     });
