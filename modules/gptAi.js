@@ -1,61 +1,57 @@
 // gptApi.js
 const https = require('https');
 
-function generateText(prompt, callback) {
+function generateText(prompt) {
+  return new Promise((resolve, reject) => {
     const data = JSON.stringify({
-        'messages': [
-            {
-                'role': 'system',
-                'content': 'You are a helpful assistant.'
-            },
-            {
-                'role': 'user',
-                'content': prompt
-            }
-        ],
-        'max_tokens': 200,
-        'engine': 'gpt-3.5-turbo' // Updated engine
+      messages: [
+        { role: 'system', content: 'You are a helpful assistant.' },
+        { role: 'user', content: prompt }
+      ],
+      max_tokens: 200, 
+      model: 'gpt-3.5-turbo' 
     });
 
     const options = {
-        hostname: 'api.openai.com',
-        port: 443,
-        path: '/v1/chat/completions', // Updated path
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Content-Length': data.length,
-            'Authorization': 'Bearer ' + process.env.GPT_AI_API_KEY
-        }
+      hostname: 'api.openai.com',
+      port: 443,
+      path: '/v1/chat/completions',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': data.length,
+        'Authorization': `Bearer ${process.env.GPT_AI_API_KEY}` // Replace with your API Key
+      }
     };
 
     const req = https.request(options, (res) => {
-        let response = '';
+      let response = '';
 
-        res.on('data', (chunk) => {
-            response += chunk;
-        });
+      res.on('data', (chunk) => {
+        response += chunk;
+      });
 
-        res.on('end', () => {
-            try {
-                const result = JSON.parse(response);
-                if (result.choices && result.choices[0] && result.choices[0].message && result.choices[0].message.content) {
-                    callback(null, result.choices[0].message.content);
-                } else {
-                    callback(new Error('Unexpected API response format'));
-                }
-            } catch (err) {
-                callback(err);
-            }
-        });
+      res.on('end', () => {
+        if (res.statusCode === 200) {
+          try {
+            const result = JSON.parse(response);
+            resolve(result.choices[0].message.content);
+          } catch (err) {
+            reject(err);
+          }
+        } else {
+          reject(new Error(`API request failed with status code: ${res.statusCode}`));
+        }
+      });
     });
 
     req.on('error', (error) => {
-        callback(error);
+      reject(error);
     });
 
     req.write(data);
     req.end();
+  });
 }
 
-module.exports = generateText;
+module.exports = generateText; 
