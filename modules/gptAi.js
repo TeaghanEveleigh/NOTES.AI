@@ -31,6 +31,7 @@ function generateText(prompt, callback) {
             try {
                 const result = JSON.parse(response);
                 console.log(response);
+                console.log(result);
                 if (result.choices && result.choices[0] && result.choices[0].text) {
                     callback(null, result.choices[0].text);
                 } else {
