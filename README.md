@@ -1,7 +1,7 @@
 
 
 # NOTES.AI 
-[NOTES.AI](https://notes-ai.herokuapp.com/Get-started) is an innovative web application that leverages artificial intelligence to convert your text inputs into comprehensive notes. It is designed with modern technologies, offering a range of features that enhance the user experience.
+[NOTES.AI](https://notes-ai-726eeb3eb870.herokuapp.com/Get-started) is an innovative web application that leverages artificial intelligence to convert your text inputs into comprehensive notes. It is designed with modern technologies, offering a range of features that enhance the user experience.
 
 ## Key Features
 
