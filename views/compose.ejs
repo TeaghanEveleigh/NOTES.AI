@@ -1,65 +1,96 @@
 <%- include("partials/header") %>
 <style>
   @media (prefers-color-scheme: dark) {
-    .note-container { background-color: #2a2a2a!important; color: #FFF; }
-    .form-group     { background-color: #2a2a2a; color: #FFF; }
-    .form-control   { background-color: #555; color: #FFF; border: 1px solid #666; }
-    .btn-primary    { background-color: #007bff; border-color: #007bff; color: #FFF; }
-    .btn-secondary  { background-color: #6c757d; border-color: #6c757d; color: #FFF; }
-    .ql-toolbar.ql-snow { background: #2a2a2a; border-color: #444; color: #fff; }
-    .ql-container.ql-snow { background: #2a2a2a; border-color: #444; color: #fff; }
+    .note-container { background-color: #1f1f1f!important; color: #fff; }
+    .form-control   { background-color: #2a2a2a; color: #eaeaea; border: 1px solid #3a3a3a; }
+    .btn-primary    { background-color: #3b82f6; border-color: #3b82f6; color: #fff; }
+    .ql-toolbar.ql-snow { background:#2a2a2a; border-color:#444; color:#fff; }
+    .ql-container.ql-snow { background:#1f1f1f; border-color:#444; color:#fff; }
     .ql-picker, .ql-stroke { color:#fff; stroke:#fff; }
     .ql-editor { color:#fff; }
+    .chat-sheet { background:#121212; color:#eaeaea; border-color:#2a2a2a; }
+    .msg.ai .bubble { background:#1f2937; color:#eaeaea; }
+    .msg.self .bubble { background:#0b5fff; color:#fff; }
+    #chat-fab { background:#3b82f6; color:#fff; }
   }
 
   .note-container {
-    width: 80%; max-width: 800px; margin: 20px auto; padding: 20px;
-    box-shadow: 0 5px 15px rgba(0,0,0,.2); background: white;
+    width: 90%; max-width: 980px; margin: 24px auto; padding: 20px;
+    box-shadow: 0 8px 30px rgba(0,0,0,.15); background: #fff; border-radius: 14px;
   }
   .note-container h1 { text-align: center; margin-bottom: 20px; }
-  .note-container .form-group, .note-container .mb-3 { margin-bottom: 20px; }
-  .note-container button { margin-top: 20px; }
-  .ql-container.ql-snow { border-radius: 4px; min-height: 40vh; }
-  @media (max-width: 768px) { .note-container { width: 100%; padding: 10px; } }
+  .ql-container.ql-snow { border-radius: 10px; min-height: 42vh; }
+  .btn { border-radius: 10px; }
 
-  /* Chat styles */
-  .chat-box { display: none; }
-  .chat-box.open { display: block; }
-  .chat-box {
-    transform-origin: bottom right; transform: scale(.95); opacity: 0;
-    transition: transform .12s ease, opacity .12s ease;
-    position: fixed; right: 16px; bottom: 84px; width: min(340px, 90vw);
-    background: #fff; border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,.25); z-index: 1000;
+  /* --- Modern Chat (right sheet) --- */
+  #chat-fab {
+    position: fixed; right: 24px; bottom: 24px; width: 66px; height: 66px;
+    border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+    background: #0b5fff; color: #fff; border: none; box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    cursor: pointer; z-index: 1100; font-size: 28px;
   }
-  .chat-box.open { opacity: 1; transform: scale(1); }
-  #chat-circle {
-    position: fixed; right: 16px; bottom: 16px; width: 56px; height: 56px; border-radius: 50%;
-    box-shadow: 0 10px 24px rgba(0,0,0,.25); z-index: 1001; display: inline-flex;
-    align-items: center; justify-content: center; background: #007bff; color: #fff; border: none; cursor: pointer;
+  #chat-fab .material-icons { font-size: 28px; }
+
+  .chat-sheet {
+    position: fixed; right: 0; top: 0; bottom: 0; width: min(520px, 100%);
+    transform: translateX(100%); transition: transform .18s ease;
+    background: #ffffff; border-left: 1px solid #eaeaea; z-index: 1101;
+    display: grid; grid-template-rows: auto 1fr auto;
   }
-  .chat-box-header { display: flex; align-items: center; justify-content: space-between;
-    padding: 10px 12px; border-bottom: 1px solid #e5e5e5; font-weight: 600; }
-  .chat-box-body { max-height: 50vh; overflow: auto; }
-  .chat-logs { padding: 10px; }
-  .chat-msg { display: flex; gap: 8px; margin: 8px 0; }
-  .chat-msg.self { flex-direction: row-reverse; }
-  .chat-msg .msg-avatar img { width: 28px; height: 28px; border-radius: 50%; }
-  .chat-msg .cm-msg-text { background: #f3f3f3; padding: 8px 10px; border-radius: 8px; max-width: 75%; }
-  .chat-msg.self .cm-msg-text { background: #dfe9ff; }
-  .chat-input { border-top: 1px solid #e5e5e5; padding: 8px; }
-  .chat-input form { display: flex; gap: 8px; }
-  .chat-input input { flex: 1; }
-  .chat-msg .copy-btn {
-    margin-top: 6px; border: none; font-size: 12px; padding: 4px 8px; border-radius: 6px; cursor: pointer; background: #eaeaea; align-self: flex-end;
+  .chat-sheet.open { transform: translateX(0%); }
+
+  .chat-head {
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    padding: 14px 16px; border-bottom: 1px solid #eee; font-weight: 700;
   }
-  @media (prefers-color-scheme: dark) {
-    .chat-box { background:#1f1f1f; color:#fff; }
-    .chat-box-header { border-bottom-color:#333; }
-    .chat-msg .cm-msg-text { background:#2b2b2b; }
-    .chat-msg.self .cm-msg-text { background:#1f3a66; }
-    .chat-msg .copy-btn { background:#3a3a3a; color:#fff; }
-    #chat-circle { background:#3b82f6; }
+  .chat-head .title { display:flex; align-items:center; gap:10px; }
+  .chat-head .title .material-icons { font-size: 24px; color:#0b5fff; }
+
+  .chat-body {
+    padding: 14px 16px; overflow-y: auto;
+    display:flex; flex-direction: column; gap: 12px;
   }
+
+  .msg { display:flex; gap:10px; }
+  .msg.self { flex-direction: row-reverse; }
+  .avatar {
+    width: 36px; height: 36px; border-radius: 50%; display:inline-flex; align-items:center; justify-content:center;
+    background:#e6eefc; color:#0b5fff; font-weight: 800; flex: 0 0 36px;
+    overflow: hidden;
+  }
+  .avatar svg { width: 24px; height: 24px; }
+  .avatar.user { background:#eef2ff; color:#0b5fff; }
+  .avatar.ai   { background:#e6fffb; color:#0b5fff; }
+  .bubble {
+    max-width: 75%; padding: 10px 12px; border-radius: 12px; font-size: 15px; line-height: 1.45;
+    background:#f5f7fb; color:#111;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06);
+  }
+  .msg.self .bubble { background:#0b5fff; color:#fff; }
+  .bubble .actions { margin-top: 8px; display:flex; gap:8px; }
+  .chip {
+    border: 1px solid #e4e4e4; background:#fff; padding:4px 8px; border-radius:999px; font-size:12px; cursor:pointer;
+  }
+
+  .chat-input {
+    padding: 12px 14px; border-top: 1px solid #eee; display:flex; gap:10px;
+  }
+  .chat-input input {
+    flex:1; border: 1px solid #e0e0e0; padding: 12px 14px; border-radius: 12px; font-size: 15px;
+  }
+  .chat-input button {
+    padding: 0 14px; border-radius: 12px; border:none; background:#0b5fff; color:#fff; display:inline-flex; align-items:center; justify-content:center;
+    min-width: 52px; box-shadow: 0 4px 16px rgba(11,95,255,.25);
+  }
+
+  .ghost-hint { font-size: 12px; opacity: .7; margin-top: 4px; }
+
+  /* markdown content styles inside .bubble */
+  .bubble h1,.bubble h2,.bubble h3 { margin: .35em 0 .25em; }
+  .bubble p { margin: .25em 0; }
+  .bubble code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: rgba(0,0,0,.05); padding: 2px 6px; border-radius: 6px; }
+  .bubble pre { background: #0b172a; color: #e2e8f0; padding: 10px; border-radius: 10px; overflow:auto; }
+  .bubble ul { margin: .25em 0 .25em 1.25em; }
 </style>
 
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -84,39 +115,43 @@
 
       <button class="btn btn-primary" type="submit" name="action" value="create">Create</button>
     </form>
-
-    <!-- Chat bubble (AI) -->
-    <button id="chat-circle" class="btn btn-raised" aria-label="Open chat" type="button">
-      <i class="material-icons">speaker_phone</i>
-    </button>
-
-    <div class="chat-box" aria-live="polite" aria-hidden="true">
-      <div class="chat-box-header">
-        ChatBot
-        <button class="chat-box-toggle" aria-label="Close chat" type="button"><i class="material-icons">close</i></button>
-      </div>
-      <div class="chat-box-body">
-        <div class="chat-logs"></div>
-      </div>
-      <div class="chat-input">
-        <form id="chat-form">
-          <input type="text" id="chat-input" placeholder="Send a message..." autocomplete="off"/>
-          <button type="submit" class="chat-submit" id="chat-submit"><i class="material-icons">send</i></button>
-        </form>
-      </div>
-    </div>
   </div>
 
-  <!-- jQuery & Bootstrap JS -->
+  <!-- FAB -->
+  <button id="chat-fab" aria-label="Open AI assistant" type="button" title="Assistant">
+    <span class="material-icons">smart_toy</span>
+  </button>
+
+  <!-- Chat sheet -->
+  <aside id="chat-sheet" class="chat-sheet" aria-live="polite" aria-hidden="true">
+    <header class="chat-head">
+      <div class="title">
+        <span class="material-icons">smart_toy</span> Assistant
+      </div>
+      <button id="chat-close" class="btn btn-light" type="button" aria-label="Close">✕</button>
+    </header>
+    <main id="chat-body" class="chat-body"></main>
+    <footer class="chat-input">
+      <form id="chat-form">
+        <input type="text" id="chat-input" placeholder="Ask for an outline, rewrite, bullets… (Tab accepts last suggestion)" autocomplete="off"/>
+        <button id="chat-send" type="submit"><span class="material-icons">send</span></button>
+      </form>
+    </footer>
+  </aside>
+
+  <!-- jQuery & Bootstrap -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-  <!-- Quill JS -->
+  <!-- Quill -->
   <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
+  <!-- Markdown renderer + sanitizer -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.7/dist/purify.min.js"></script>
 
   <script>
-    // ---------- Quill ----------
-    var initialHtml = <%- JSON.stringify(typeof contentOfPost !== 'undefined' ? contentOfPost : '') %>; // prefill if server passes something
+    /* ---------------- Quill ---------------- */
+    var initialHtml = <%- JSON.stringify(typeof contentOfPost !== 'undefined' ? contentOfPost : '') %>;
     var quill = new Quill('#editor', {
       theme: 'snow',
       placeholder: 'Write your note…',
@@ -132,100 +167,167 @@
         ]
       }
     });
-    if (initialHtml) { quill.clipboard.dangerouslyPasteHTML(initialHtml); }
+    if (initialHtml) quill.clipboard.dangerouslyPasteHTML(initialHtml);
 
-    // Create flow: put Quill HTML in hidden input
     const composeForm = document.getElementById('compose-form');
     composeForm.addEventListener('submit', function () {
       document.getElementById('contentOfPost').value = quill.root.innerHTML;
     });
 
-    // ---------- Chatbot ----------
+    /* ---------------- Chatbot ---------------- */
     (function(){
-      let INDEX = 0, greeted = false;
-      const $chatBox   = $('.chat-box');
-      const $chatLogs  = $('.chat-logs');
-      const $chatForm  = $('#chat-form');
-      const $chatInput = $('#chat-input');
-      const $chatBtn   = $('#chat-submit');
-      const $openBtn   = $('#chat-circle');
-      const $closeBtn  = $('.chat-box-toggle');
+      const fab      = document.getElementById('chat-fab');
+      const sheet    = document.getElementById('chat-sheet');
+      const closeBtn = document.getElementById('chat-close');
+      const bodyEl   = document.getElementById('chat-body');
+      const formEl   = document.getElementById('chat-form');
+      const inputEl  = document.getElementById('chat-input');
+      const sendBtn  = document.getElementById('chat-send');
 
-      function escapeHtml(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-      function addMessage(text, type, withCopy=false){
-        INDEX++;
-        const copyBtn = withCopy ? `<button class="copy-btn" data-copy="${encodeURIComponent(text)}">Copy</button>` : '';
-        const html = `
-          <div id="cm-msg-${INDEX}" class="chat-msg ${type}">
-            <span class="msg-avatar"><img src="https://image.crisp.im/avatar/operator/196af8cc-f6ad-4ef7-afd1-c45d5231387c/240/?1483361727745" alt="avatar"></span>
-            <div class="cm-msg-text">${escapeHtml(text).replace(/\n/g,'<br>')}</div>
-            ${copyBtn}
-          </div>`;
-        $chatLogs.append(html);
-        $(`#cm-msg-${INDEX}`).hide().fadeIn(120);
-        $chatLogs.stop().animate({ scrollTop: $chatLogs[0].scrollHeight }, 240);
-      }
-      function setLoading(btn, on){
-        if (!btn) return;
-        if (on){
-          let dots = 0; if (btn._timer) clearInterval(btn._timer);
-          btn._timer = setInterval(()=>{ dots=(dots+1)%4; btn.innerHTML = `<i class="material-icons">send</i> ${'.'.repeat(dots)}`; }, 500);
-          btn.disabled = true;
-        } else {
-          if (btn._timer) clearInterval(btn._timer); btn._timer = null;
-          btn.innerHTML = `<i class="material-icons">send</i>`; btn.disabled = false;
+      let greeted = false;
+      let lastAiMarkdown = ''; // store raw markdown for copy & Tab-to-insert
+
+      function openChat(){
+        sheet.classList.add('open');
+        sheet.setAttribute('aria-hidden','false');
+        if (!greeted) {
+          addMsg('ai', "Hi! I’m your writing helper. Ask me anything or tell me what to draft.\n\n*Tip:* after a suggestion, **press Tab** to insert it into your note.", true);
+          greeted = true;
         }
       }
+      function closeChat(){
+        sheet.classList.remove('open');
+        sheet.setAttribute('aria-hidden','true');
+      }
 
-      // open/close (single handlers)
-      $openBtn.on('click', function(e){
-        e.preventDefault(); e.stopPropagation();
-        $openBtn.hide();
-        $chatBox.addClass('open').attr('aria-hidden','false');
-        if (!greeted){ addMessage("Hi! I’m your writing helper. Ask me anything or tell me what to draft. ✍️", 'ai', true); greeted = true; }
-      });
-      $closeBtn.on('click', function(e){
-        e.preventDefault(); e.stopPropagation();
-        $chatBox.removeClass('open').attr('aria-hidden','true'); $openBtn.show();
-      });
-      $chatBox.on('click', function(e){ e.stopPropagation(); });
+      fab.addEventListener('click', openChat);
+      closeBtn.addEventListener('click', closeChat);
 
-      // submit -> call /compose (AI branch)
-      $chatForm.on('submit', async function(e){
-        e.preventDefault();
-        const msg = $chatInput.val();
-        if (!msg.trim()) return;
-        addMessage(msg, 'self'); $chatInput.val('');
+      // Render helpers
+      function aiAvatarSVG(){
+        return `
+          <div class="avatar ai" aria-hidden="true" title="AI">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 2a7 7 0 0 0-7 7v2.1A4 4 0 0 0 3 15v1a4 4 0 0 0 4 4h10a4 4 0 0 0 4-4v-1a4 4 0 0 0-2-3.45V9a7 7 0 0 0-7-7Zm-3 8a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm6 0a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"/>
+            </svg>
+          </div>`;
+      }
+      function userAvatar(letter){
+        return `<div class="avatar user" title="You">${letter}</div>`;
+      }
+      function firstLetter(){
+        const t = (document.getElementById('title')?.value || 'U').trim();
+        return (t[0] || 'U').toUpperCase();
+      }
 
-        const btn = $chatBtn.get(0); setLoading(btn, true);
-        try{
+      function renderMarkdown(md){
+        const html = marked.parse(md || '');
+        return DOMPurify.sanitize(html);
+      }
+
+      function addMsg(role, markdown, withActions=false){
+        const msgEl = document.createElement('div');
+        msgEl.className = `msg ${role === 'self' ? 'self' : 'ai'}`;
+
+        const avatar = role === 'self' ? userAvatar(firstLetter()) : aiAvatarSVG();
+        const bubble = document.createElement('div');
+        bubble.className = 'bubble';
+        bubble.innerHTML = renderMarkdown(markdown);
+
+        if (withActions) {
+          const acts = document.createElement('div');
+          acts.className = 'actions';
+          // Copy button
+          const copyBtn = document.createElement('button');
+          copyBtn.type = 'button';
+          copyBtn.className = 'chip';
+          copyBtn.textContent = 'Copy';
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(markdown).then(() => {
+              copyBtn.textContent = 'Copied!';
+              setTimeout(()=> copyBtn.textContent = 'Copy', 1200);
+            });
+          });
+          // Insert button
+          const insertBtn = document.createElement('button');
+          insertBtn.type = 'button';
+          insertBtn.className = 'chip';
+          insertBtn.textContent = 'Insert to editor';
+          insertBtn.addEventListener('click', () => insertAiToQuill(markdown));
+
+          acts.appendChild(copyBtn);
+          acts.appendChild(insertBtn);
+          const hint = document.createElement('div');
+          hint.className = 'ghost-hint';
+          hint.textContent = 'Tip: Press Tab to insert this into your note.';
+          bubble.appendChild(acts);
+          bubble.appendChild(hint);
+        }
+
+        msgEl.innerHTML = avatar;
+        msgEl.appendChild(bubble);
+        bodyEl.appendChild(msgEl);
+        bodyEl.scrollTop = bodyEl.scrollHeight;
+      }
+
+      async function send(text){
+        // user bubble
+        addMsg('self', text, false);
+
+        // request
+        let dots = 0;
+        const orig = sendBtn.innerHTML;
+        sendBtn.disabled = true;
+        const tmr = setInterval(()=>{ dots=(dots+1)%4; sendBtn.innerHTML = `<span class="material-icons">send</span> ${'.'.repeat(dots)}`; }, 400);
+
+        try {
           const resp = await fetch('/compose', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               action: 'generate_ai',
-              Prompt: msg,
-              contextHtml: (window.quill ? quill.root.innerHTML : '')
+              Prompt: text,
+              contextHtml: quill.root.innerHTML
             })
           });
-          // IMPORTANT: if server returns HTML due to missing JSON parsing, this will throw:
           const data = await resp.json();
-          const aiText = (resp.ok && data.ok && data.reply) ? data.reply : (data.error || 'Sorry, I couldn’t generate a response.');
-          addMessage(aiText, 'ai', true);
-        } catch(err){
-          console.error(err);
-          addMessage('Oops—AI request failed. Ensure server parses JSON with app.use(express.json()).', 'ai', true);
+          const reply = (resp.ok && data.ok && data.reply) ? (''+data.reply) : (data.error || 'Sorry, I couldn’t generate a response.');
+          lastAiMarkdown = reply;
+          addMsg('ai', reply, true);
+        } catch (e) {
+          console.error(e);
+          lastAiMarkdown = '';
+          addMsg('ai', 'Oops — AI request failed. Please try again.', false);
         } finally {
-          setLoading(btn, false);
+          clearInterval(tmr);
+          sendBtn.innerHTML = orig;
+          sendBtn.disabled = false;
+        }
+      }
+
+      function insertAiToQuill(markdown){
+        // convert markdown -> HTML then insert
+        const html = renderMarkdown(markdown);
+        const divider = '<hr style="opacity:.25;margin:12px 0;">';
+        quill.clipboard.dangerouslyPasteHTML(quill.getLength()-1, `${divider}${html}`);
+      }
+
+      // Tab-to-autofill: insert last AI suggestion
+      window.addEventListener('keydown', function(e){
+        if (!sheet.classList.contains('open')) return;
+        if (e.key === 'Tab' && lastAiMarkdown) {
+          e.preventDefault();
+          insertAiToQuill(lastAiMarkdown);
         }
       });
 
-      // copy handler
-      $(document).on('click', '.copy-btn', function(){
-        const txt = decodeURIComponent($(this).data('copy') || '');
-        navigator.clipboard.writeText(txt).then(()=>{
-          $(this).text('Copied!'); setTimeout(()=>$(this).text('Copy'), 1200);
-        });
+      // Submit handler
+      formEl.addEventListener('submit', function(e){
+        e.preventDefault();
+        const val = (inputEl.value || '').trim();
+        if (!val) return;
+        send(val);
+        inputEl.value = '';
       });
     })();
   </script>
