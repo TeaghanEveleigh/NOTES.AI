@@ -1,112 +1,156 @@
 <%- include("partials/header") %>
 <style>
-    @media (prefers-color-scheme: dark) {
-    
-
+  @media (prefers-color-scheme: dark) {
     .note-container {
-        background-color: #2a2a2a!important;
-        color: #FFF;
+      background-color: #2a2a2a!important;
+      color: #FFF;
     }
-
     .form-group {
-        background-color: #2a2a2a;
-        color: #FFF;
+      background-color: #2a2a2a;
+      color: #FFF;
     }
-
     .form-control {
-        background-color: #555;
-        color: #FFF;
-        border: 1px solid #666;
+      background-color: #555;
+      color: #FFF;
+      border: 1px solid #666;
     }
-
     .btn-primary {
-        background-color: #007bff;
-        border-color: #007bff;
-        color: #FFF;
+      background-color: #007bff;
+      border-color: #007bff;
+      color: #FFF;
+    }
+    .btn-secondary {
+      background-color: #6c757d;
+      border-color: #6c757d;
+      color: #FFF;
+    }
+    /* Dark mode for Quill */
+    .ql-toolbar.ql-snow { background: #2a2a2a; border-color: #444; color: #fff; }
+    .ql-container.ql-snow { background: #2a2a2a; border-color: #444; color: #fff; }
+    .ql-picker, .ql-stroke { color: #fff; stroke: #fff; }
+    .ql-editor { color: #fff; }
+  }
+
+  .note-container {
+    width: 80%;
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    box-shadow: 0px 5px 15px rgba(0,0,0,2);
+    background: white;
+  }
+  .note-container h1 { text-align: center; margin-bottom: 20px; }
+  .note-container .form-group, .note-container .mb-3 { margin-bottom: 20px; }
+  .note-container button { margin-top: 20px; }
+  /* Make Quill feel like a Bootstrap control */
+  .ql-container.ql-snow { border-radius: 4px; min-height: 40vh; }
+  @media (max-width: 768px) {
+    .note-container { width: 100%; padding: 10px; }
+  }
+</style>
+
+<!-- Material Icons (only needed if you use <i class="material-icons">... -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<!-- Quill CSS -->
+<link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet">
+
+<body>
+  <div class="note-container">
+    <h1>Edit</h1>
+
+    <form id="edit-form" action="/edit/<%= id %>" method="post">
+      <div class="mb-3">
+        <label for="title" class="form-label">Title</label>
+        <input id="title" type="text" name="titleOfPost" autocomplete="off" class="form-control" value="<%= title %>">
+      </div>
+
+      <div class="form-group">
+        <label for="prompt">Ask our AI</label>
+        <input id="prompt" type="text" name="Prompt" autocomplete="off" class="form-control">
+      </div>
+
+      <div class="mb-3">
+        <label for="editor" class="form-label">Edit note</label>
+        <!-- Rich text editor -->
+        <div id="editor"></div>
+        <!-- Hidden input sent to server -->
+        <input type="hidden" id="contentOfPost" name="contentOfPost" required>
+      </div>
+
+      <button class="btn btn-primary mt-5" type="submit" name="action" value="create">Save</button>
+      <button id="myButton" class="btn btn-secondary" type="submit" name="action" value="generate_ai">Ask AI</button>
+    </form>
+  </div>
+
+  <!-- jQuery (then Bootstrap JS) -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+  <!-- Quill JS -->
+  <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
+
+  <script>
+    // Prefill Quill with existing HTML
+    var initialHtml =  JSON.stringify(typeof text !== 'undefined' ? text : '') ;
+
+    var quill = new Quill('#editor', {
+      theme: 'snow',
+      placeholder: 'Edit your note…',
+      modules: {
+        toolbar: [
+          [{ header: [1, 2, 3, false] }],
+          ['bold', 'italic', 'underline', 'strike'],
+          [{ list: 'ordered' }, { list: 'bullet' }],
+          [{ align: [] }],
+          ['blockquote', 'code-block'],
+          ['link'],
+          ['clean']
+        ]
+      }
+    });
+
+    if (initialHtml) {
+      quill.clipboard.dangerouslyPasteHTML(initialHtml);
     }
 
-    .btn-secondary {
-        background-color: #6c757d;
-        border-color: #6c757d;
-        color: #FFF;
-    }
-}
-    .note-container {
-        width: 80%;
-        max-width: 800px;
-        margin: 20px auto;
-        padding: 20px;
-        box-shadow: 0px 5px 15px rgba(0,0,0,2);
-        background: white;
-    }
-    .note-container h1 {
-        text-align: center;
-        margin-bottom: 20px;
-    }
-    .note-container .form-group {
-        margin-bottom: 20px;
-    }
-    .note-container textarea {
-        min-height: 40vh;
-    }
-    .note-container button {
-        margin-top: 20px;
-    }
-    @media (max-width: 768px) {
-        .note-container {
-            width: 100%;
-            padding: 10px;
-        }
-    }
-</style>
-<body>
-    <div class="note-container">
-        <h1>Edit</h1>
-        <form action="/edit/<%= id %>" method="post">
-            <div class="mb-3">
-                <label for="exampleFormControlInput1" class="form-label">Title</label>
-                <input id="title" type="text" name="titleOfPost" autocomplete="off" class="form-control" id="exampleFormControlInput1" value="<%=title%>">
-            </div>
-            <div class="form-group">
-                <label for="exampleFormControlInput1">Ask our AI</label>
-                <input id="prompt" type="text" name="Prompt" autocomplete="off" class="form-control" id="exampleFormControlInput1" >
-            </div>
-            <div class="mb-3">
-                <label for="exampleFormControlTextarea1" class="form-label">edit note</label>
-                <textarea class="form-control" id="exampleFormControlTextarea1" rows="10" name="contentOfPost" autocomplete="off" required><%= text %></textarea>
-            </div>
-            <button class="btn btn-primary mt-5" type="submit" name="action" value="create">Save</button>
-            <button id="myButton" class="btn btn-secondary" type="submit" name="action" value="generate_ai">Ask AI</button>
-        </form>
-    </div>
-    <!-- jQuery -->
-    <script>
-        document.querySelector('form').addEventListener('submit', function(event) {
-  const overlay = document.createElement('div');
-  overlay.style.position = 'fixed';
-  overlay.style.top = 0;
-  overlay.style.right = 0;
-  overlay.style.bottom = 0;
-  overlay.style.left = 0;
-  overlay.style.backgroundColor = 'rgba(0, 0, 0, 0)';
-  document.body.appendChild(overlay);
-});
-        var myButton = document.getElementById('myButton');
-        var titleInput = document.getElementById('title');
-        var promptInput = document.getElementById('prompt');
-        var dotsCount = 0;
-        var message = 'AI typing';
-        
-        myButton.addEventListener('click', function() {
-            if (titleInput.value && promptInput.value) {  // check if both fields are filled in
-                setInterval(function() {
-                    dotsCount = (dotsCount + 1) % 4; // cycle from 0, 1, 2, 3, then back to 0
-                    myButton.innerHTML = message + '.'.repeat(dotsCount); // append dots to message
-                }, 500); // change text every 500ms
-            }
-        });
-        </script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <!-- Bootstrap JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <%- include("partials/footer") %>
+    // On submit, push Quill HTML into hidden input
+    var form = document.getElementById('edit-form');
+    form.addEventListener('submit', function () {
+      document.getElementById('contentOfPost').value = quill.root.innerHTML;
+
+      // Optional overlay (your original)
+      const overlay = document.createElement('div');
+      overlay.style.position = 'fixed';
+      overlay.style.top = 0; overlay.style.right = 0; overlay.style.bottom = 0; overlay.style.left = 0;
+      overlay.style.backgroundColor = 'rgba(0, 0, 0, 0)';
+      document.body.appendChild(overlay);
+    });
+
+    // Ask AI typing dots (scoped, stops on submit)
+    var myButton = document.getElementById('myButton');
+    var titleInput = document.getElementById('title');
+    var promptInput = document.getElementById('prompt');
+    var dotsCount = 0;
+    var message = 'AI typing';
+    var aiInterval = null;
+
+    myButton.addEventListener('click', function () {
+      if (titleInput.value && promptInput.value) {
+        if (aiInterval) clearInterval(aiInterval);
+        aiInterval = setInterval(function () {
+          dotsCount = (dotsCount + 1) % 4;
+          myButton.textContent = message + '.'.repeat(dotsCount);
+        }, 500);
+      }
+    });
+
+    form.addEventListener('submit', function () {
+      if (aiInterval) {
+        clearInterval(aiInterval);
+        aiInterval = null;
+      }
+    });
+  </script>
+</body>
+
+<%- include("partials/footer") %>

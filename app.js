@@ -79,82 +79,64 @@ app.get("/compose",requireLogin, function(req, res){
   res.render("compose");
 });
 
-app.post("/compose",requireLogin, function(req, res) {
-  let date = new Date();
-  let options = { weekday: 'short', day: 'numeric', month: 'long' };
-  let formattedDate = date.toLocaleDateString('en-US', options);
-  let reqbody=" ";
-  if(req.body.contentOfPost){
-    reqbody=req.body.contentOfPost;
-  }
-  let post = {
-    title: req.body.titleOfPost,
-    content: reqbody,
-    date: formattedDate,
-    prompt:req.body.Prompt
-  };
+app.post("/compose", requireLogin, async function(req, res) {
+  try {
+    const { action, titleOfPost, Prompt, contentOfPost, contextHtml } = req.body || {};
 
-  // Validation
-  if (!post.title || (!post.content && !post.prompt)) {
-    //return res.status(400).send('Invalid post data');
-    res.redirect("/compose");
-  }
-
-  if (req.body.action === 'generate_ai') {
-    console.log("WE ARE USING AI");
-    generateText(post.prompt, function(err, generatedText) {
-      if (err) {
-        console.error(err);
-        res.status(500).send("An error occurred while generating text.");
-      } else {
-        console.log(generatedText);
-        post.prompt = generatedText;
-        res.render("ai-page", { title: post.title, generatedText: post.content+post.prompt });
+    // === AI branch (called via fetch from the Compose page) ===
+    if (action === 'generate_ai') {
+      if (!Prompt || typeof Prompt !== 'string') {
+        return res.status(400).json({ ok: false, error: 'Missing prompt' });
       }
-    });
-  } else {
-    // Check if session exists and has userId
+
+      const system = 'You are a concise, helpful writing assistant for a note-taking app.';
+      const ctx = (contextHtml || contentOfPost || '').slice(0, 8000);
+
+      const prompt = ctx
+        ? `User prompt:\n${Prompt}\n\nCurrent note HTML:\n${ctx}\n\nRespond with improved text or suggestions directly.`
+        : Prompt;
+
+      const reply = await generateText(prompt, { system, max_tokens: 500, temperature: 0.7 });
+      return res.json({ ok: true, reply });
+    }
+
+    // === Normal create branch (form submit) ===
+    const date = new Date();
+    const options = { weekday: 'short', day: 'numeric', month: 'long' };
+    const formattedDate = date.toLocaleDateString('en-US', options);
+    const content = contentOfPost || '';
+
+    if (!titleOfPost || (!content && !Prompt)) {
+      return res.redirect("/compose");
+    }
+
     if (!req.session || !req.session.userId) {
       return res.status(401).send('Unauthorized');
     }
 
-    const userId = req.session.userId ;
+    const userId = req.session.userId;
 
-    // Create a new note
     const newNote = new Note({
       user: userId,
-      content: ""+post.content,
-      date: post.date,
-      title: post.title
+      content: String(content),
+      date: formattedDate,
+      title: titleOfPost
     });
 
-    newNote.save()
-  .then(savedNote => {
-    if (!savedNote) {
-      throw new Error('Failed to save note');
-    }
-    // Retrieve the user
-    return User.findById(userId).exec().then(user => ({user, savedNote}));
-  })
-  .then(data => {
-    if (!data.user) {
-      throw new Error('User not found');
-    }
-    data.user.posts.push(data.savedNote._id);
-    return data.user.save();
-  })
-  .then(user => {
-    if (!user) {
-      throw new Error('Failed to update user');
-    }
+    const savedNote = await newNote.save();
+    const user = await User.findById(userId).exec();
+    if (!user) return res.status(404).send('User not found');
+
+    user.posts.push(savedNote._id);
+    await user.save();
+
     res.redirect("/");
-  })
-  .catch(err => {
+  } catch (err) {
     console.error(err);
     res.status(500).send("An error occurred.");
-  });
   }
 });
+
 
 
 
