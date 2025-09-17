@@ -1,96 +1,8 @@
 <%- include("partials/header") %>
 <style>
-  @media (prefers-color-scheme: dark) {
-    .note-container { background-color:#1f1f1f!important; color:#fff; }
-    .form-control   { background-color:#2a2a2a; color:#eaeaea; border:1px solid #3a3a3a; }
-    .btn-primary    { background-color:#3b82f6; border-color:#3b82f6; color:#fff; }
-    .ql-toolbar.ql-snow { background:#2a2a2a; border-color:#444; color:#fff; }
-    .ql-container.ql-snow { background:#1f1f1f; border-color:#444; color:#fff; }
-    .ql-picker, .ql-stroke { color:#fff; stroke:#fff; }
-    .ql-editor { color:#fff; }
-    .chat-sheet { background:#121212; color:#eaeaea; border-color:#2a2a2a; }
-    .msg.ai .bubble { background:#1f2937; color:#eaeaea; }
-    .msg.self .bubble { background:#0b5fff; color:#fff; }
-    #chat-fab { background:#3b82f6; color:#fff; }
-  }
-
-  .note-container {
-    width: 90%; max-width: 980px; margin: 24px auto; padding: 20px;
-    box-shadow: 0 8px 30px rgba(0,0,0,.15); background:#fff; border-radius: 14px;
-  }
-  .note-container h1 { text-align:center; margin-bottom:20px; }
-  .ql-container.ql-snow { border-radius:10px; min-height:42vh; }
-  .btn { border-radius:10px; }
-
-  /* --- Modern Chat (right sheet) --- */
-  #chat-fab {
-    position: fixed; right: 24px; bottom: 24px; width: 66px; height: 66px;
-    border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
-    background: #0b5fff; color:#fff; border:none; box-shadow: 0 10px 30px rgba(0,0,0,.25);
-    cursor:pointer; z-index:1100; font-size:28px;
-  }
-  #chat-fab .material-icons { font-size:28px; }
-
-  .chat-sheet {
-    position: fixed; right: 0; top: 0; bottom: 0; width: min(520px, 100%);
-    transform: translateX(100%); transition: transform .18s ease;
-    background:#ffffff; border-left: 1px solid #eaeaea; z-index:1101;
-    display:grid; grid-template-rows:auto 1fr auto;
-  }
-  .chat-sheet.open { transform: translateX(0%); }
-
-  .chat-head {
-    display:flex; align-items:center; justify-content:space-between; gap:12px;
-    padding: 14px 16px; border-bottom:1px solid #eee; font-weight:700;
-  }
-  .chat-head .title { display:flex; align-items:center; gap:10px; }
-  .chat-head .title .material-icons { font-size:24px; color:#0b5fff; }
-
-  .chat-body {
-    padding: 14px 16px; overflow-y:auto; display:flex; flex-direction:column; gap:12px;
-  }
-
-  .msg { display:flex; gap:10px; }
-  .msg.self { flex-direction: row-reverse; }
-  .avatar {
-    width:36px; height:36px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center;
-    background:#e6eefc; color:#0b5fff; font-weight:800; flex:0 0 36px; overflow:hidden;
-  }
-  .avatar svg { width:24px; height:24px; }
-  .avatar.user { background:#eef2ff; color:#0b5fff; }
-  .avatar.ai   { background:#e6fffb; color:#0b5fff; }
-  .bubble {
-    max-width:75%; padding:10px 12px; border-radius:12px; font-size:15px; line-height:1.45;
-    background:#f5f7fb; color:#111; box-shadow:0 1px 3px rgba(0,0,0,.06);
-  }
-  .msg.self .bubble { background:#0b5fff; color:#fff; }
-  .bubble .actions { margin-top:8px; display:flex; gap:8px; }
-  .chip {
-    border:1px solid #e4e4e4; background:#fff; padding:4px 8px; border-radius:999px; font-size:12px; cursor:pointer;
-  }
-
-  .chat-input {
-    padding: 12px 14px; border-top:1px solid #eee; display:flex; gap:10px;
-  }
-  .chat-input input {
-    flex:1; border:1px solid #e0e0e0; padding:12px 14px; border-radius:12px; font-size:15px;
-  }
-  .chat-input button {
-    padding:0 14px; border-radius:12px; border:none; background:#0b5fff; color:#fff;
-    display:inline-flex; align-items:center; justify-content:center; min-width:52px;
-    box-shadow:0 4px 16px rgba(11,95,255,.25);
-  }
-
-  .ghost-hint { font-size:12px; opacity:.7; margin-top:4px; }
-
-  /* markdown look inside bubbles */
-  .bubble h1,.bubble h2,.bubble h3 { margin:.35em 0 .25em; }
-  .bubble p { margin:.25em 0; }
-  .bubble code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: rgba(0,0,0,.06); padding:2px 6px; border-radius:6px; }
-  .bubble pre { background:#0b172a; color:#e2e8f0; padding:10px; border-radius:10px; overflow:auto; }
-  .bubble ul { margin:.25em 0 .25em 1.25em; }
-  <style>
-  /* ---------- Color tokens ---------- */
+  /* =========================
+     THEME TOKENS (auto light/dark)
+     ========================= */
   :root{
     --bg: #ffffff;
     --text: #111827;
@@ -98,7 +10,9 @@
     --border: #e5e7eb;
     --brand: #0b5fff;
 
-    --chat-bg: var(--bg);
+    --note-bg: var(--bg);
+
+    --chat-bg: #ffffff;      /* chat sheet background (opaque) */
     --chat-text: var(--text);
     --chat-muted: var(--muted);
     --chat-border: var(--border);
@@ -114,7 +28,8 @@
     --code-bg: #0b172a;
     --code-fg: #e2e8f0;
 
-    --shadow: 0 10px 30px rgba(0,0,0,.20);
+    --shadow-strong: 0 16px 40px rgba(0,0,0,.25);
+    --shadow:        0 10px 30px rgba(0,0,0,.20);
   }
 
   @media (prefers-color-scheme: dark){
@@ -125,6 +40,14 @@
       --border: #2a2a2a;
       --brand: #3b82f6;
 
+      --note-bg: #1f1f1f;
+
+      --chat-bg: #141414;    /* solid, non-transparent */
+      --chat-text: #eaeaea;
+      --chat-muted: #1e1e1e;
+      --chat-border: #2a2a2a;
+      --chat-brand: #3b82f6;
+
       --bubble-ai-bg: #1f2937;
       --bubble-ai-text: #eaeaea;
       --bubble-user-bg: #0b5fff;
@@ -132,93 +55,158 @@
 
       --avatar-ai-bg: #052e2b;
       --avatar-user-bg: #1f2a59;
+
       --code-bg: #0b172a;
       --code-fg: #e2e8f0;
 
-      --shadow: 0 10px 30px rgba(0,0,0,.45);
+      --shadow-strong: 0 16px 44px rgba(0,0,0,.55);
+      --shadow:        0 10px 32px rgba(0,0,0,.45);
     }
   }
 
-  /* ---------- Layout (unchanged behavior, themed with vars) ---------- */
-  #chat-fab{
-    position: fixed; right: 24px; bottom: 24px; width: 66px; height: 66px;
-    border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
-    background: var(--chat-brand); color: #fff; border: none; box-shadow: var(--shadow);
-    cursor: pointer; z-index: 1100; font-size: 28px;
+  /* =========================
+     PAGE + QUILL
+     ========================= */
+  .note-container {
+    width: 90%;
+    max-width: 980px;
+    margin: 24px auto;
+    padding: 20px;
+    box-shadow: var(--shadow);
+    background: var(--note-bg);
+    color: var(--chat-text);
+    border-radius: 14px;
   }
-  #chat-fab .material-icons{ font-size: 28px; }
-
-  .chat-sheet{
-    position: fixed; right: 0; top: 0; bottom: 0; width: min(520px, 100%);
-    transform: translateX(100%); transition: transform .18s ease;
-    background: var(--chat-bg); color: var(--chat-text); border-left: 1px solid var(--chat-border);
-    z-index: 1101; display: grid; grid-template-rows: auto 1fr auto;
+  .note-container h1 { text-align: center; margin-bottom: 20px; }
+  .form-control {
+    background: var(--chat-muted);
+    color: var(--chat-text);
+    border: 1px solid var(--chat-border);
+    border-radius: 10px;
   }
-  .chat-sheet.open{ transform: translateX(0%); }
+  .btn-primary {
+    background: var(--chat-brand);
+    border-color: var(--chat-brand);
+    color: #fff;
+    border-radius: 10px;
+  }
+  .ql-toolbar.ql-snow { background: var(--chat-muted); border-color: var(--chat-border); color: var(--chat-text); }
+  .ql-container.ql-snow { background: var(--note-bg); border-color: var(--chat-border); color: var(--chat-text); }
+  .ql-picker, .ql-stroke { color: var(--chat-text); stroke: var(--chat-text); }
+  .ql-editor { color: var(--chat-text); }
+  .ql-container.ql-snow { border-radius: 10px; min-height: 42vh; }
 
-  .chat-head{
+  /* =========================
+     CHAT UI (sheet + fab)
+     ========================= */
+  #chat-fab {
+    position: fixed; right: 24px; bottom: 24px;
+    width: 68px; height: 68px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--chat-brand); color:#fff; border:none;
+    box-shadow: var(--shadow-strong); cursor:pointer; z-index:1100; font-size:28px;
+  }
+  #chat-fab .material-icons { font-size: 30px; }
+
+  .chat-sheet {
+    position: fixed; right: 0; top: 0; bottom: 0; width: min(560px, 100%);
+    transform: translateX(100%); transition: transform .2s ease;
+    background: var(--chat-bg); color: var(--chat-text);
+    border-left: 1px solid var(--chat-border); z-index: 1101;
+    display: grid; grid-template-rows: auto 1fr auto;
+    box-shadow: var(--shadow-strong);
+  }
+  .chat-sheet.open { transform: translateX(0%); }
+
+  .chat-head {
     display:flex; align-items:center; justify-content:space-between; gap:12px;
-    padding:14px 16px; border-bottom:1px solid var(--chat-border); font-weight:700;
+    padding: 16px 18px; border-bottom:1px solid var(--chat-border); font-weight:700;
     background: var(--chat-bg); color: var(--chat-text);
   }
-  .chat-head .title{ display:flex; align-items:center; gap:10px; }
-  .chat-head .title .material-icons{ font-size:24px; color: var(--chat-brand); }
+  .chat-head .title { display:flex; align-items:center; gap:10px; }
+  .chat-head .title .material-icons { font-size:24px; color: var(--chat-brand); }
+  #chat-close { background: transparent; border: 1px solid var(--chat-border); color: var(--chat-text); border-radius: 10px; padding: 6px 10px; }
 
-  .chat-body{
-    padding:14px 16px; overflow-y:auto; display:flex; flex-direction:column; gap:12px;
+  .chat-body {
+    padding: 16px 18px; overflow-y:auto; display:flex; flex-direction:column; gap:12px;
     background: var(--chat-bg); color: var(--chat-text);
   }
 
-  .msg{ display:flex; gap:10px; }
-  .msg.self{ flex-direction: row-reverse; }
-
-  .avatar{
-    width:36px; height:36px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center;
-    color:#fff; flex:0 0 36px; overflow: hidden;
+  .msg { display:flex; gap:12px; }
+  .msg.self { flex-direction: row-reverse; }
+  .avatar {
+    width:40px; height:40px; border-radius:50%;
+    display:inline-flex; align-items:center; justify-content:center;
+    flex: 0 0 40px; overflow:hidden; color:#fff; font-weight:800;
   }
-  .avatar.user{ background: var(--avatar-user-bg); color: #fff; }
-  .avatar.ai{ background: var(--avatar-ai-bg); color: #bffcff; }
-  .avatar svg{ width:24px; height:24px; }
+  .avatar.user { background: var(--avatar-user-bg); color:#fff; }
+  .avatar.ai   { background: var(--avatar-ai-bg); color:#bffcff; }
+  .avatar svg { width: 22px; height: 22px; }
 
-  .bubble{
-    max-width:75%; padding:10px 12px; border-radius:12px; font-size:15px; line-height:1.45;
+  .bubble {
+    max-width: 78%;
+    padding: 12px 14px;
+    border-radius: 14px;
+    font-size: 15.5px; line-height: 1.5;
     background: var(--bubble-ai-bg); color: var(--bubble-ai-text);
     box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    word-wrap: break-word;
   }
-  .msg.self .bubble{ background: var(--bubble-user-bg); color: var(--bubble-user-text); }
+  .msg.self .bubble { background: var(--bubble-user-bg); color: var(--bubble-user-text); }
 
-  .bubble .actions{ margin-top:8px; display:flex; gap:8px; }
-  .chip{
-    border:1px solid var(--chat-border); background: var(--chat-bg); color: var(--chat-text);
-    padding:4px 8px; border-radius:999px; font-size:12px; cursor:pointer;
+  .bubble .actions { margin-top: 8px; display:flex; gap: 8px; flex-wrap: wrap; }
+  .chip {
+    border:1px solid var(--chat-border);
+    background: var(--chat-bg);
+    color: var(--chat-text);
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    cursor: pointer;
   }
+  .ghost-hint { font-size: 12px; opacity: .7; margin-top: 4px; }
 
-  .chat-input{
-    padding:12px 14px; border-top:1px solid var(--chat-border);
+  .chat-input {
+    padding: 12px 16px; border-top:1px solid var(--chat-border);
     display:flex; gap:10px; background: var(--chat-bg);
   }
-  .chat-input input{
-    flex:1; border:1px solid var(--chat-border); padding:12px 14px; border-radius:12px; font-size:15px;
-    background: var(--muted); color: var(--chat-text);
+  .chat-input input {
+    flex:1; border:1px solid var(--chat-border); padding:14px 16px; border-radius:12px; font-size:15.5px;
+    background: var(--chat-muted); color: var(--chat-text);
   }
-  .chat-input button{
-    padding:0 14px; border-radius:12px; border:none; background: var(--chat-brand); color:#fff;
-    display:inline-flex; align-items:center; justify-content:center; min-width:52px; box-shadow: 0 4px 16px rgba(11,95,255,.25);
+  .chat-input button {
+    border:none; background: var(--chat-brand); color:#fff; border-radius:12px;
+    min-width:56px; display:inline-flex; align-items:center; justify-content:center; padding: 0 14px;
+    box-shadow: 0 4px 16px rgba(11,95,255,.25);
   }
+  .chat-input button .material-icons { font-size: 22px; }
 
-  /* Markdown look inside bubbles */
+  /* Markdown look in bubbles */
   .bubble h1,.bubble h2,.bubble h3{ margin:.35em 0 .25em; }
   .bubble p{ margin:.25em 0; }
-  .bubble code{ font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: rgba(0,0,0,.06); padding:2px 6px; border-radius:6px; }
+  .bubble ul{ margin:.25em 0 .25em 1.25em; }
+  .bubble code{
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    background: rgba(0,0,0,.08);
+    padding: 2px 6px; border-radius: 6px;
+  }
   .bubble pre{
     background: var(--code-bg); color: var(--code-fg);
-    padding:10px; border-radius:10px; overflow:auto;
+    padding: 10px; border-radius: 10px; overflow: auto;
   }
 
-  /* Optional: make Quill match theme a bit more (you already had some) */
-  .ql-container.ql-snow{ border-radius:10px; }
-</style>
-
+  /* Loading dots for send button (replaces arrow entirely while loading) */
+  .dots { display:inline-flex; gap:4px; align-items:center; justify-content:center; }
+  .dot {
+    width:6px; height:6px; border-radius:50%;
+    background: #fff; opacity:.3; animation: pulse 1s infinite;
+  }
+  .dot:nth-child(2){ animation-delay: .15s; }
+  .dot:nth-child(3){ animation-delay: .30s; }
+  @keyframes pulse {
+    0%, 100% { opacity: .3; transform: translateY(0); }
+    50%      { opacity: 1;  transform: translateY(-2px); }
+  }
 </style>
 
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -248,20 +236,20 @@
 
   <!-- AI FAB -->
   <button id="chat-fab" aria-label="Open AI assistant" type="button" title="Assistant">
-    <span class="material-icons">smart_toy</span>
+    <span class="material-icons">face_2</span>
   </button>
 
   <!-- Chat sheet -->
   <aside id="chat-sheet" class="chat-sheet" aria-live="polite" aria-hidden="true">
     <header class="chat-head">
       <div class="title"><span class="material-icons">smart_toy</span> Assistant</div>
-      <button id="chat-close" class="btn btn-light" type="button" aria-label="Close">✕</button>
+      <button id="chat-close" type="button" aria-label="Close">✕</button>
     </header>
     <main id="chat-body" class="chat-body"></main>
     <footer class="chat-input">
       <form id="chat-form">
         <input type="text" id="chat-input" placeholder="Ask for rewrites, bullets, outlines… (Press Tab to insert last suggestion)" autocomplete="off"/>
-        <button id="chat-send" type="submit"><span class="material-icons">send</span></button>
+        <button id="chat-send" type="submit" aria-label="Send"><span class="material-icons">send</span></button>
       </form>
     </footer>
   </aside>
@@ -301,7 +289,7 @@
       document.getElementById('contentOfPost').value = quill.root.innerHTML;
     });
 
-    /* ---------- Chatbot (same behavior as Compose) ---------- */
+    /* ---------- Chatbot ---------- */
     (function(){
       const fab      = document.getElementById('chat-fab');
       const sheet    = document.getElementById('chat-sheet');
@@ -333,7 +321,8 @@
         return `
           <div class="avatar ai" aria-hidden="true" title="AI">
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path d="M12 2a7 7 0 0 0-7 7v2.1A4 4 0 0 0 3 15v1a4 4 0 0 0 4 4h10a4 4 0 0 0 4-4v-1a4 4 0 0 0-2-3.45V9a7 7 0 0 0-7-7Zm-3 8a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm6 0a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"/>
+              <!-- a simple bot face -->
+              <path d="M12 2a2 2 0 1 1 0 4h-.1A8 8 0 0 1 20 14v1a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5v-1c0-3.87 3.13-7 7-7H12zm-3 8.25a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5Zm6 0a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5ZM8.5 17h7a.75.75 0 0 0 0-1.5h-7a.75.75 0 0 0 0 1.5Z"/>
             </svg>
           </div>`;
       }
@@ -397,15 +386,23 @@
         bodyEl.scrollTop = bodyEl.scrollHeight;
       }
 
+      function setLoading(on){
+        if (on){
+          // remove arrow & show dots
+          sendBtn.innerHTML = `<span class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>`;
+          sendBtn.disabled = true;
+        } else {
+          // restore arrow
+          sendBtn.innerHTML = `<span class="material-icons">send</span>`;
+          sendBtn.disabled = false;
+        }
+      }
+
       async function send(text){
         addMsg('self', text, false);
-        let dots = 0;
-        const orig = sendBtn.innerHTML;
-        sendBtn.disabled = true;
-        const tmr = setInterval(()=>{ dots=(dots+1)%4; sendBtn.innerHTML = `<span class="material-icons">send</span> ${'.'.repeat(dots)}`; }, 400);
-
+        setLoading(true);
         try {
-          // Reuse the compose AI branch (returns JSON). Server already supports this.
+          // Reuse compose AI branch (JSON)
           const resp = await fetch('/compose', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -424,9 +421,7 @@
           lastAiMarkdown = '';
           addMsg('ai', 'Oops — AI request failed. Please try again.', false);
         } finally {
-          clearInterval(tmr);
-          sendBtn.innerHTML = orig;
-          sendBtn.disabled = false;
+          setLoading(false);
         }
       }
 
