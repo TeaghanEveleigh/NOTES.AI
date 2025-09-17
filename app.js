@@ -13,6 +13,8 @@ const MongoStore = require('connect-mongo');
 const saltRounds = 10;
 const app = express();
 const path = require('path');
+app.use(express.json());  
+
 
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Database connected successfully'))
