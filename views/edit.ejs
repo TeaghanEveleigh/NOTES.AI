@@ -1,112 +1,195 @@
 <%- include("partials/header") %>
 <style>
-    @media (prefers-color-scheme: dark) {
-    
+  @media (prefers-color-scheme: dark) {
+    .note-container { background-color: #2a2a2a!important; color: #FFF; }
+    .form-group { background-color: #2a2a2a; color: #FFF; }
+    .form-control { background-color: #555; color: #FFF; border: 1px solid #666; }
+    .btn-primary { background-color: #007bff; border-color: #007bff; color: #FFF; }
+    .btn-secondary { background-color: #6c757d; border-color: #6c757d; color: #FFF; }
+    /* tiptap surface in dark */
+    .ProseMirror { color: #fff; }
+    .EditorShell { background: #2a2a2a; }
+    .Toolbar button { color: #fff; border-color: #666; }
+  }
 
-    .note-container {
-        background-color: #2a2a2a!important;
-        color: #FFF;
-    }
+  .note-container {
+    width: 80%;
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    box-shadow: 0px 5px 15px rgba(0,0,0,2);
+    background: white;
+  }
+  .note-container h1 { text-align: center; margin-bottom: 20px; }
+  .note-container .form-group { margin-bottom: 20px; }
+  .note-container button { margin-top: 20px; }
+  @media (max-width: 768px) {
+    .note-container { width: 100%; padding: 10px; }
+  }
 
-    .form-group {
-        background-color: #2a2a2a;
-        color: #FFF;
-    }
-
-    .form-control {
-        background-color: #555;
-        color: #FFF;
-        border: 1px solid #666;
-    }
-
-    .btn-primary {
-        background-color: #007bff;
-        border-color: #007bff;
-        color: #FFF;
-    }
-
-    .btn-secondary {
-        background-color: #6c757d;
-        border-color: #6c757d;
-        color: #FFF;
-    }
-}
-    .note-container {
-        width: 80%;
-        max-width: 800px;
-        margin: 20px auto;
-        padding: 20px;
-        box-shadow: 0px 5px 15px rgba(0,0,0,2);
-        background: white;
-    }
-    .note-container h1 {
-        text-align: center;
-        margin-bottom: 20px;
-    }
-    .note-container .form-group {
-        margin-bottom: 20px;
-    }
-    .note-container textarea {
-        min-height: 40vh;
-    }
-    .note-container button {
-        margin-top: 20px;
-    }
-    @media (max-width: 768px) {
-        .note-container {
-            width: 100%;
-            padding: 10px;
-        }
-    }
+  /* Editor shell styled to feel like .form-control */
+  .EditorShell {
+    border: 1px solid #ced4da;         /* Bootstrap-ish */
+    border-radius: 4px;
+    background: #fff;
+  }
+  .Toolbar {
+    display: flex;
+    gap: .5rem;
+    padding: .5rem;
+    border-bottom: 1px solid #eee;
+    flex-wrap: wrap;
+  }
+  .Toolbar button {
+    background: transparent;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    padding: .25rem .5rem;
+    cursor: pointer;
+  }
+  .Toolbar button:active { transform: translateY(1px); }
+  .Editor {
+    padding: 1rem;
+    min-height: 40vh;                   /* matches your textarea height */
+  }
+  .ProseMirror {
+    outline: none;
+  }
+  /* Basic prose look without adding a big CSS framework */
+  .ProseMirror h2 { font-size: 1.25rem; margin: .75rem 0; }
+  .ProseMirror h3 { font-size: 1.1rem; margin: .5rem 0; }
+  .ProseMirror ul { padding-left: 1.2rem; list-style: disc; }
+  .ProseMirror ol { padding-left: 1.2rem; list-style: decimal; }
+  .ProseMirror code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  .ProseMirror pre { background: rgba(0,0,0,.05); padding: .75rem; border-radius: 6px; overflow: auto; }
+  .ProseMirror .taskList { list-style: none; padding-left: 0; }
+  .ProseMirror .taskItem { display: flex; gap: .5rem; align-items: flex-start; }
 </style>
+
 <body>
-    <div class="note-container">
-        <h1>Edit</h1>
-        <form action="/edit/<%= id %>" method="post">
-            <div class="mb-3">
-                <label for="exampleFormControlInput1" class="form-label">Title</label>
-                <input id="title" type="text" name="titleOfPost" autocomplete="off" class="form-control" id="exampleFormControlInput1" value="<%=title%>">
-            </div>
-            <div class="form-group">
-                <label for="exampleFormControlInput1">Ask our AI</label>
-                <input id="prompt" type="text" name="Prompt" autocomplete="off" class="form-control" id="exampleFormControlInput1" >
-            </div>
-            <div class="mb-3">
-                <label for="exampleFormControlTextarea1" class="form-label">edit note</label>
-                <textarea class="form-control" id="exampleFormControlTextarea1" rows="10" name="contentOfPost" autocomplete="off" required><%= text %></textarea>
-            </div>
-            <button class="btn btn-primary mt-5" type="submit" name="action" value="create">Save</button>
-            <button id="myButton" class="btn btn-secondary" type="submit" name="action" value="generate_ai">Ask AI</button>
-        </form>
-    </div>
-    <!-- jQuery -->
-    <script>
-        document.querySelector('form').addEventListener('submit', function(event) {
-  const overlay = document.createElement('div');
-  overlay.style.position = 'fixed';
-  overlay.style.top = 0;
-  overlay.style.right = 0;
-  overlay.style.bottom = 0;
-  overlay.style.left = 0;
-  overlay.style.backgroundColor = 'rgba(0, 0, 0, 0)';
-  document.body.appendChild(overlay);
-});
-        var myButton = document.getElementById('myButton');
-        var titleInput = document.getElementById('title');
-        var promptInput = document.getElementById('prompt');
-        var dotsCount = 0;
-        var message = 'AI typing';
-        
-        myButton.addEventListener('click', function() {
-            if (titleInput.value && promptInput.value) {  // check if both fields are filled in
-                setInterval(function() {
-                    dotsCount = (dotsCount + 1) % 4; // cycle from 0, 1, 2, 3, then back to 0
-                    myButton.innerHTML = message + '.'.repeat(dotsCount); // append dots to message
-                }, 500); // change text every 500ms
-            }
-        });
-        </script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <!-- Bootstrap JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <%- include("partials/footer") %>
+  <div class="note-container">
+    <h1>Edit</h1>
+
+    <form action="/edit/<%= id %>" method="post" id="note-form">
+      <div class="mb-3">
+        <label for="title" class="form-label">Title</label>
+        <input id="title" type="text" name="titleOfPost" autocomplete="off"
+               class="form-control" value="<%= title %>">
+      </div>
+
+      <div class="form-group">
+        <label for="prompt">Ask our AI</label>
+        <input id="prompt" type="text" name="Prompt" autocomplete="off" class="form-control">
+      </div>
+
+      <!-- Hidden fields to submit editor content -->
+      <input type="hidden" name="contentOfPost" id="contentOfPost"><!-- legacy support -->
+      <input type="hidden" name="contentJson" id="contentJson"><!-- tiptap JSON -->
+      <input type="hidden" name="contentHtml" id="contentHtml"><!-- optional cached HTML -->
+
+      <div class="mb-3">
+        <label class="form-label">Edit note</label>
+
+        <!-- Toolbar + Editor (styled like your form-control) -->
+        <div class="EditorShell">
+          <div class="Toolbar">
+            <button type="button" onclick="cmd('toggleBold')" title="Bold"><b>B</b></button>
+            <button type="button" onclick="cmd('toggleItalic')" title="Italic"><i>I</i></button>
+            <button type="button" onclick="cmd('toggleBulletList')" title="Bulleted List">• List</button>
+            <button type="button" onclick="cmd('toggleOrderedList')" title="Numbered List">1. List</button>
+            <button type="button" onclick="cmd('toggleTaskList')" title="Tasks">☑</button>
+            <button type="button" onclick="cmd('toggleCodeBlock')" title="Code">{ }</button>
+            <button type="button" onclick="cmd('setParagraph')" title="Paragraph">¶</button>
+            <button type="button" onclick="cmd('toggleHeading', { level: 2 })" title="H2">H2</button>
+            <button type="button" onclick="cmd('toggleHeading', { level: 3 })" title="H3">H3</button>
+          </div>
+          <div id="editor" class="Editor form-control"></div>
+        </div>
+      </div>
+
+      <button class="btn btn-primary mt-5" type="submit" name="action" value="create">Save</button>
+      <button id="myButton" class="btn btn-secondary" type="submit" name="action" value="generate_ai">Ask AI</button>
+    </form>
+  </div>
+
+  <!-- Your existing “overlay” + AI typing effect -->
+  <script>
+    document.querySelector('form').addEventListener('submit', function() {
+      const overlay = document.createElement('div');
+      overlay.style.position = 'fixed';
+      overlay.style.top = 0; overlay.style.right = 0; overlay.style.bottom = 0; overlay.style.left = 0;
+      overlay.style.backgroundColor = 'rgba(0, 0, 0, 0)';
+      document.body.appendChild(overlay);
+    });
+    var myButton = document.getElementById('myButton');
+    var titleInput = document.getElementById('title');
+    var promptInput = document.getElementById('prompt');
+    var dotsCount = 0;
+    var message = 'AI typing';
+    myButton.addEventListener('click', function() {
+      if (titleInput.value && promptInput.value) {
+        setInterval(function() {
+          dotsCount = (dotsCount + 1) % 4;
+          myButton.innerHTML = message + '.'.repeat(dotsCount);
+        }, 500);
+      }
+    });
+  </script>
+
+  <!-- tiptap (CDN, ESM) -->
+  <script type="module">
+    import { Editor } from 'https://unpkg.com/@tiptap/core@2.5.9/dist/tiptap-core.esm.js';
+    import StarterKit from 'https://unpkg.com/@tiptap/starter-kit@2.5.9/dist/tiptap-starter-kit.esm.js';
+    import TaskList from 'https://unpkg.com/@tiptap/extension-task-list@2.5.9/dist/tiptap-extension-task-list.esm.js';
+    import TaskItem from 'https://unpkg.com/@tiptap/extension-task-item@2.5.9/dist/tiptap-extension-task-item.esm.js';
+    import Placeholder from 'https://unpkg.com/@tiptap/extension-placeholder@2.5.9/dist/tiptap-extension-placeholder.esm.js';
+    import BulletList from 'https://unpkg.com/@tiptap/extension-bullet-list@2.5.9/dist/tiptap-extension-bullet-list.esm.js';
+    import OrderedList from 'https://unpkg.com/@tiptap/extension-ordered-list@2.5.9/dist/tiptap-extension-ordered-list.esm.js';
+    import CodeBlockLowlight from 'https://unpkg.com/@tiptap/extension-code-block-lowlight@2.5.9/dist/tiptap-extension-code-block-lowlight.esm.js';
+    import { lowlight } from 'https://unpkg.com/lowlight@3.1.0/lib/common.js';
+
+    // Initial content: reuse your old <%= text %> as a paragraph
+    const initialText = <%- JSON.stringify(text || '') %>;
+
+    const editor = new Editor({
+      element: document.getElementById('editor'),
+      extensions: [
+        StarterKit.configure({ codeBlock: false }),
+        BulletList,
+        OrderedList,
+        TaskList,
+        TaskItem.configure({ nested: true }),
+        CodeBlockLowlight.configure({ lowlight }),
+        Placeholder.configure({ placeholder: 'Write something… Use / for commands' }),
+      ],
+      content: {
+        type: 'doc',
+        content: initialText
+          ? [{ type: 'paragraph', content: [{ type: 'text', text: initialText }] }]
+          : [{ type: 'paragraph' }]
+      },
+      editorProps: {
+        attributes: { class: 'ProseMirror' }
+      }
+    });
+
+    // Toolbar helper
+    window.cmd = (name, args) => editor.commands[name]?.(args);
+
+    // On submit: keep legacy 'contentOfPost' and also send JSON/HTML for new backend
+    document.getElementById('note-form').addEventListener('submit', () => {
+      const json = editor.getJSON();
+      const html = editor.getHTML();
+      const text = editor.getText();
+
+      document.getElementById('contentJson').value = JSON.stringify(json);
+      document.getElementById('contentHtml').value = html;
+      document.getElementById('contentOfPost').value = text;     // backwards compatible
+    });
+  </script>
+
+  <!-- jQuery & Bootstrap (as you had) -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+  <%- include("partials/footer") %>
