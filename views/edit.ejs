@@ -1,4 +1,6 @@
 <%- include("partials/header") %>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"><!-- for icons if used -->
+
 <style>
   @media (prefers-color-scheme: dark) {
     .note-container { background-color: #2a2a2a!important; color: #FFF; }
@@ -6,64 +8,36 @@
     .form-control { background-color: #555; color: #FFF; border: 1px solid #666; }
     .btn-primary { background-color: #007bff; border-color: #007bff; color: #FFF; }
     .btn-secondary { background-color: #6c757d; border-color: #6c757d; color: #FFF; }
-    /* tiptap surface in dark */
     .ProseMirror { color: #fff; }
     .EditorShell { background: #2a2a2a; }
     .Toolbar button { color: #fff; border-color: #666; }
   }
-
   .note-container {
-    width: 80%;
-    max-width: 800px;
-    margin: 20px auto;
-    padding: 20px;
-    box-shadow: 0px 5px 15px rgba(0,0,0,2);
-    background: white;
+    width: 80%; max-width: 800px; margin: 20px auto; padding: 20px;
+    box-shadow: 0px 5px 15px rgba(0,0,0,2); background: white;
   }
   .note-container h1 { text-align: center; margin-bottom: 20px; }
   .note-container .form-group { margin-bottom: 20px; }
   .note-container button { margin-top: 20px; }
-  @media (max-width: 768px) {
-    .note-container { width: 100%; padding: 10px; }
-  }
+  @media (max-width: 768px) { .note-container { width: 100%; padding: 10px; } }
 
-  /* Editor shell styled to feel like .form-control */
-  .EditorShell {
-    border: 1px solid #ced4da;         /* Bootstrap-ish */
-    border-radius: 4px;
-    background: #fff;
-  }
-  .Toolbar {
-    display: flex;
-    gap: .5rem;
-    padding: .5rem;
-    border-bottom: 1px solid #eee;
-    flex-wrap: wrap;
-  }
+  /* Editor look matching form-control */
+  .EditorShell { border: 1px solid #ced4da; border-radius: 4px; background: #fff; }
+  .Toolbar { display:flex; gap:.5rem; padding:.5rem; border-bottom:1px solid #eee; flex-wrap:wrap; }
   .Toolbar button {
-    background: transparent;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-    padding: .25rem .5rem;
-    cursor: pointer;
+    background: transparent; border: 1px solid #ced4da; border-radius: 4px; padding: .25rem .5rem; cursor: pointer;
   }
   .Toolbar button:active { transform: translateY(1px); }
-  .Editor {
-    padding: 1rem;
-    min-height: 40vh;                   /* matches your textarea height */
-  }
-  .ProseMirror {
-    outline: none;
-  }
-  /* Basic prose look without adding a big CSS framework */
-  .ProseMirror h2 { font-size: 1.25rem; margin: .75rem 0; }
-  .ProseMirror h3 { font-size: 1.1rem; margin: .5rem 0; }
-  .ProseMirror ul { padding-left: 1.2rem; list-style: disc; }
-  .ProseMirror ol { padding-left: 1.2rem; list-style: decimal; }
-  .ProseMirror code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
-  .ProseMirror pre { background: rgba(0,0,0,.05); padding: .75rem; border-radius: 6px; overflow: auto; }
-  .ProseMirror .taskList { list-style: none; padding-left: 0; }
-  .ProseMirror .taskItem { display: flex; gap: .5rem; align-items: flex-start; }
+  .Editor { padding: 1rem; min-height: 40vh; }
+  .ProseMirror { outline: none; }
+  .ProseMirror h2 { font-size:1.25rem; margin:.75rem 0; }
+  .ProseMirror h3 { font-size:1.1rem; margin:.5rem 0; }
+  .ProseMirror ul { padding-left:1.2rem; list-style: disc; }
+  .ProseMirror ol { padding-left:1.2rem; list-style: decimal; }
+  .ProseMirror code { font-family: ui-monospace, Menlo, Consolas, monospace; }
+  .ProseMirror pre { background: rgba(0,0,0,.05); padding:.75rem; border-radius:6px; overflow:auto; }
+  .ProseMirror .taskList { list-style:none; padding-left:0; }
+  .ProseMirror .taskItem { display:flex; gap:.5rem; align-items:flex-start; }
 </style>
 
 <body>
@@ -73,24 +47,21 @@
     <form action="/edit/<%= id %>" method="post" id="note-form">
       <div class="mb-3">
         <label for="title" class="form-label">Title</label>
-        <input id="title" type="text" name="titleOfPost" autocomplete="off"
-               class="form-control" value="<%= title %>">
+        <input id="title" type="text" name="titleOfPost" autocomplete="off" class="form-control" value="<%= typeof title !== 'undefined' ? title : '' %>">
       </div>
 
       <div class="form-group">
         <label for="prompt">Ask our AI</label>
-        <input id="prompt" type="text" name="Prompt" autocomplete="off" class="form-control">
+        <input id="prompt" type="text" name="Prompt" autocomplete="off" class="form-control" placeholder="e.g., Summarize the key points…">
       </div>
 
-      <!-- Hidden fields to submit editor content -->
-      <input type="hidden" name="contentOfPost" id="contentOfPost"><!-- legacy support -->
+      <!-- hidden fields for submit -->
+      <input type="hidden" name="contentOfPost" id="contentOfPost"><!-- plain text (legacy) -->
       <input type="hidden" name="contentJson" id="contentJson"><!-- tiptap JSON -->
-      <input type="hidden" name="contentHtml" id="contentHtml"><!-- optional cached HTML -->
+      <input type="hidden" name="contentHtml" id="contentHtml"><!-- sanitized (server) or raw (client) -->
 
       <div class="mb-3">
         <label class="form-label">Edit note</label>
-
-        <!-- Toolbar + Editor (styled like your form-control) -->
         <div class="EditorShell">
           <div class="Toolbar">
             <button type="button" onclick="cmd('toggleBold')" title="Bold"><b>B</b></button>
@@ -108,31 +79,21 @@
       </div>
 
       <button class="btn btn-primary mt-5" type="submit" name="action" value="create">Save</button>
-      <button id="myButton" class="btn btn-secondary" type="submit" name="action" value="generate_ai">Ask AI</button>
+      <button id="askAiBtn" class="btn btn-secondary" type="button">Ask AI</button>
     </form>
   </div>
 
-  <!-- Your existing “overlay” + AI typing effect -->
+  <!-- Overlay on submit (kept) -->
   <script>
-    document.querySelector('form').addEventListener('submit', function() {
-      const overlay = document.createElement('div');
-      overlay.style.position = 'fixed';
-      overlay.style.top = 0; overlay.style.right = 0; overlay.style.bottom = 0; overlay.style.left = 0;
-      overlay.style.backgroundColor = 'rgba(0, 0, 0, 0)';
-      document.body.appendChild(overlay);
-    });
-    var myButton = document.getElementById('myButton');
-    var titleInput = document.getElementById('title');
-    var promptInput = document.getElementById('prompt');
-    var dotsCount = 0;
-    var message = 'AI typing';
-    myButton.addEventListener('click', function() {
-      if (titleInput.value && promptInput.value) {
-        setInterval(function() {
-          dotsCount = (dotsCount + 1) % 4;
-          myButton.innerHTML = message + '.'.repeat(dotsCount);
-        }, 500);
-      }
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.getElementById('note-form');
+      form.addEventListener('submit', function() {
+        const overlay = document.createElement('div');
+        overlay.style.position = 'fixed';
+        overlay.style.top = 0; overlay.style.right = 0; overlay.style.bottom = 0; overlay.style.left = 0;
+        overlay.style.backgroundColor = 'rgba(0, 0, 0, 0)';
+        document.body.appendChild(overlay);
+      });
     });
   </script>
 
@@ -148,8 +109,15 @@
     import CodeBlockLowlight from 'https://unpkg.com/@tiptap/extension-code-block-lowlight@2.5.9/dist/tiptap-extension-code-block-lowlight.esm.js';
     import { lowlight } from 'https://unpkg.com/lowlight@3.1.0/lib/common.js';
 
-    // Initial content: reuse your old <%= text %> as a paragraph
-    const initialText = <%- JSON.stringify(text || '') %>;
+    // SAFE server-side variables
+
+      const _initialText = (typeof text !== 'undefined' && text != null)
+        ? String(text)
+        : (typeof note !== 'undefined' && note && note.text ? String(note.text) : '');
+      const _initialJSON = (typeof note !== 'undefined' && note && note.content) ? note.content : null;
+
+    const initialText =  JSON.stringify(_initialText) ;
+    const initialJSON =  JSON.stringify(_initialJSON) ;
 
     const editor = new Editor({
       element: document.getElementById('editor'),
@@ -162,34 +130,72 @@
         CodeBlockLowlight.configure({ lowlight }),
         Placeholder.configure({ placeholder: 'Write something… Use / for commands' }),
       ],
-      content: {
+      content: initialJSON || {
         type: 'doc',
         content: initialText
           ? [{ type: 'paragraph', content: [{ type: 'text', text: initialText }] }]
           : [{ type: 'paragraph' }]
       },
-      editorProps: {
-        attributes: { class: 'ProseMirror' }
-      }
+      editorProps: { attributes: { class: 'ProseMirror' } }
     });
 
-    // Toolbar helper
     window.cmd = (name, args) => editor.commands[name]?.(args);
 
-    // On submit: keep legacy 'contentOfPost' and also send JSON/HTML for new backend
+    // Save: push JSON/HTML/Text into hidden inputs
     document.getElementById('note-form').addEventListener('submit', () => {
-      const json = editor.getJSON();
-      const html = editor.getHTML();
-      const text = editor.getText();
+      document.getElementById('contentJson').value = JSON.stringify(editor.getJSON());
+      document.getElementById('contentHtml').value = editor.getHTML();
+      document.getElementById('contentOfPost').value = editor.getText(); // legacy safety
+    });
 
-      document.getElementById('contentJson').value = JSON.stringify(json);
-      document.getElementById('contentHtml').value = html;
-      document.getElementById('contentOfPost').value = text;     // backwards compatible
+    // Ask AI: call backend and insert reply at cursor
+    const askBtn = document.getElementById('askAiBtn');
+    const promptInput = document.getElementById('prompt');
+    const titleInput = document.getElementById('title');
+
+    askBtn.addEventListener('click', async () => {
+      const prompt = (promptInput.value || '').trim();
+      if (!prompt) {
+        askBtn.textContent = 'Prompt required';
+        setTimeout(() => askBtn.textContent = 'Ask AI', 900);
+        return;
+      }
+      askBtn.disabled = true;
+      const oldLabel = askBtn.textContent;
+      let dots = 0;
+      const t = setInterval(() => { dots = (dots+1)%4; askBtn.textContent = 'AI typing' + '.'.repeat(dots); }, 400);
+
+      try {
+        const resp = await fetch('/api/ai', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            prompt,
+            title: titleInput.value || '',
+            context: editor.getText() // give current note as context
+          })
+        });
+        const data = await resp.json();
+        if (!resp.ok) throw new Error(data?.error || resp.statusText);
+
+        // Insert at cursor as a new paragraph
+        editor
+          .chain()
+          .focus()
+          .insertContent([{ type: 'paragraph', content: [{ type: 'text', text: data.text }] }])
+          .run();
+      } catch (e) {
+        console.error(e);
+        alert('AI error: ' + e.message);
+      } finally {
+        clearInterval(t);
+        askBtn.disabled = false;
+        askBtn.textContent = oldLabel;
+      }
     });
   </script>
 
-  <!-- jQuery & Bootstrap (as you had) -->
+  <!-- jQuery & Bootstrap (kept) -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-
   <%- include("partials/footer") %>
