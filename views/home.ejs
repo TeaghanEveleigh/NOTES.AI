@@ -10,8 +10,8 @@
     align-items: center;
     flex-direction: column;
     width: 100%;
-    max-width: 50%;  /* Limit the width to half of the screen */
-    margin: 20px auto;  /* Vertically center the search form and results and add margins */
+    max-width: 50%;
+    margin: 20px auto;
 }
 
 .search-form {
@@ -21,7 +21,7 @@
 }
 
 .search-input {
-    flex-grow: 1;  /* Makes the input take up the remaining space */
+    flex-grow: 1;
     padding: 5px;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -33,7 +33,7 @@
     border-radius: 5px;
     background-color: #ddd;
     cursor: pointer;
-    margin-left: 10px;  /* Separates the button from the input */
+    margin-left: 10px;
 }
 
 .search-results {
@@ -48,6 +48,24 @@
     z-index: 1000;
     box-sizing: border-box;
 }
+
+/* Card preview: clamp to a few lines even with rich HTML */
+.post-text {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;     /* show ~4 lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    max-height: 6.5em;         /* fallback for non-webkit */
+    line-height: 1.6;
+}
+
+/* Don’t let preview links steal navigation */
+.post-text a {
+    pointer-events: none;
+    text-decoration: none;
+    color: inherit;
+}
+
 @media (prefers-color-scheme: dark) {
     .search-input {
         background-color: #444;
@@ -71,9 +89,8 @@
         background-color: #666;
     }
 }
-
-
 </style>
+
 <body>
     <div class="search-form-container">
         <form action="/search" method="post" class="search-form">
@@ -82,120 +99,120 @@
         </form>
         <div id="search-results" class="search-results"></div>
     </div>
-    </div>
+
     <div class="conatainer top-things">
-    <h1 class="titleofpage">Your Notes</h1>
-    <div class="sort-container">
-        <form id="sort-form" method="post" action="/sort">
-            <select id="sort-options" name="sort-option" onchange="document.getElementById('sort-form').submit();">
-                <option value="">Sort By...</option>
-                <option value="title-reverse">Title A-Z</option>
-                <option value="date-oldest">Last edited</option>
-                <option value="title">Title Z-A</option>
-                <option value="date">Oldest edited</option>
-            </select>
-        </form>
+        <h1 class="titleofpage">Your Notes</h1>
+        <div class="sort-container">
+            <form id="sort-form" method="post" action="/sort">
+                <select id="sort-options" name="sort-option" onchange="document.getElementById('sort-form').submit();">
+                    <option value="">Sort By...</option>
+                    <option value="title-reverse">Title A-Z</option>
+                    <option value="date-oldest">Last edited</option>
+                    <option value="title">Title Z-A</option>
+                    <option value="date">Oldest edited</option>
+                </select>
+            </form>
+        </div>
     </div>
-</div>
+
     <div id="posts-container">
         <div class="plus-button" onclick="window.location.href='/compose'">
             <a href="/compose">+</a>
-          </div>
-        
+        </div>
+
         <% posts.slice().reverse().forEach(element => { %>
             <!-- Individual Post -->
-            <div class="post" data-id="<%=element._id%>" data-url="/<%=element._id%>">
-                <form id="form-<%=element._id%>" method="post" action="/">
-                    <input type="hidden" name="id" value="<%=element._id%>">
-                    <input type="hidden" name="action" id="action-<%=element._id%>"> <!-- Hidden action field -->
+            <div class="post" data-id="<%= element._id %>">
+                <form id="form-<%= element._id %>" method="post" action="/">
+                    <input type="hidden" name="id" value="<%= element._id %>">
+                    <input type="hidden" name="action" id="action-<%= element._id %>">
+
                     <div class="post-icons">
                         <div class="icon edit-icon" data-action="edit">
-                            <!-- SVG code here... -->
                             <button class="svg-button" type="submit" onclick="document.getElementById('action-<%=element._id%>').value='edit';">
-                                <!-- SVG details... -->
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
                                     <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
                                     <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
-                                  </svg>
+                                </svg>
                             </button>
                             <span class="icon-text">Edit</span>
                         </div>
+
                         <div class="icon delete-icon" data-action="delete">
-                            <!-- SVG code here... -->
-                            
                             <button class="svg-button" type="submit" onclick="document.getElementById('action-<%=element._id%>').value='delete';">
-                                <!-- SVG details... -->
-                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
-                                <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5Zm-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5ZM4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5Z"/>
-                              </svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                                    <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5Zm-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5ZM4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5Z"/>
+                                </svg>
                             </button>
                             <span class="icon-text">Delete</span>
                         </div>
                     </div>
                 </form>
+
                 <h2 class="post-title"><%= element.title %></h2>
-                <p class="post-text"><%= element.content.slice(0,35) %></p>
+                <!-- Empty container; we’ll render sanitized HTML/Markdown below -->
+                <div class="post-text" id="post-preview-<%= element._id %>"></div>
+
                 <a href="/post/<%=element.title%>" class="read-more">Read More</a>
-                <p class="post-date">LAST EDITED: <%=element.date%></p>
+                <p class="post-date">LAST EDITED: <%= element.date %></p>
             </div>
         <%  });  %>
     </div>
-    
-    
+
+    <!-- Libs: Marked (Markdown→HTML) + DOMPurify (sanitize) -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <!-- Bootstrap JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
     <script>
-        function sendPostRequest(url, action, id) {
-    fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ action: action, id: id }) // Send action and id in the body
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => console.log(data))
-    .catch(error => {
-        console.error('There has been a problem with your fetch operation:', error);
-    });
+/* ---------- Helper: safe preview render (Markdown or HTML) ---------- */
+function renderPreview(raw) {
+  if (!raw) return '';
+  const hasTags = /<\/?[a-z][\s\S]*>/i.test(raw); // crude check for HTML
+  let html = hasTags ? raw : marked.parse(raw);    // MD->HTML if no tags
+  // Sanitize either way
+  html = DOMPurify.sanitize(html, {
+    USE_PROFILES: { html: true },
+    ALLOWED_URI_REGEXP: /^(?:(?:https?|mailto|tel):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i
+  });
+  return html;
 }
-let posts = JSON.parse('<%- JSON.stringify(posts) %>'); // now posts is available in client-side JS
+
+/* ---------- Render all previews ---------- */
+let posts = JSON.parse('<%- JSON.stringify(posts) %>'); // available to client
+posts.slice().reverse().forEach(post => {
+  const el = document.getElementById('post-preview-' + post._id);
+  if (!el) return;
+  el.innerHTML = renderPreview(post.content);
+});
+
+/* ---------- Existing search (unchanged) ---------- */
 let searchBar = document.getElementById('search-bar');
 let searchResults = document.getElementById('search-results');
 
 searchBar.addEventListener('input', function(e) {
-    let searchQuery = e.target.value.toLowerCase();
-    searchResults.innerHTML = ''; // Clear out any old results
+  let searchQuery = e.target.value.toLowerCase();
+  searchResults.innerHTML = '';
 
-    if (searchQuery) {
-        let results = posts.filter(post => post.title.toLowerCase().includes(searchQuery));
-        results.forEach(result => {
-            let resultElement = document.createElement('div');
-            resultElement.textContent = result.title;
-            // update the search bar value when a result is clicked
-            resultElement.addEventListener('click', function() {
-                searchBar.value = result.title;
-                searchBar.dispatchEvent(new Event('input')); // dispatch input event manually
-            });
-            searchResults.appendChild(resultElement);
-        });
-        if (results.length) {
-            searchResults.style.display = 'block'; // show the search results
-        } else {
-            searchResults.style.display = 'none'; // hide the search results
-        }
-    } else {
-        searchResults.style.display = 'none'; // hide the search results
-    }
+  if (searchQuery) {
+    let results = posts.filter(post => (post.title || '').toLowerCase().includes(searchQuery));
+    results.forEach(result => {
+      let resultElement = document.createElement('div');
+      resultElement.textContent = result.title;
+      resultElement.addEventListener('click', function() {
+        searchBar.value = result.title;
+        searchBar.dispatchEvent(new Event('input'));
+      });
+      searchResults.appendChild(resultElement);
+    });
+    searchResults.style.display = results.length ? 'block' : 'none';
+  } else {
+    searchResults.style.display = 'none';
+  }
 });
-
-
     </script>
 </body>
 <%- include("partials/footer") %>
