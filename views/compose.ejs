@@ -1,7 +1,7 @@
 <%- include("partials/header") %>
 <link rel="stylesheet" href="/css/compose.css">
 
-<!-- Material Icons (fixes the 'speaker_phone' showing as text) -->
+<!-- Material Icons -->
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
 <!-- Quill RTE -->
@@ -29,11 +29,7 @@
 
       <div class="form-group">
         <label for="editor">New note</label>
-
-        <!-- Visible rich text editor -->
         <div id="editor" style="min-height: 220px;"></div>
-
-        <!-- Hidden field your server actually reads -->
         <input type="hidden" id="contentOfPost" name="contentOfPost">
       </div>
 
@@ -42,23 +38,24 @@
       </div>
     </form>
 
-    <div id="chat-circle" class="btn btn-raised">
+    <!-- Chat bubble -->
+    <button id="chat-circle" class="btn btn-raised" aria-label="Open chat" type="button">
       <div id="chat-overlay"></div>
       <i class="material-icons">speaker_phone</i>
-    </div>
+    </button>
 
-    <div class="chat-box">
+    <div class="chat-box" aria-live="polite" aria-hidden="true">
       <div class="chat-box-header">
         ChatBot
-        <span class="chat-box-toggle"><i class="material-icons">close</i></span>
+        <button class="chat-box-toggle" aria-label="Close chat" type="button"><i class="material-icons">close</i></button>
       </div>
       <div class="chat-box-body">
         <div class="chat-box-overlay"></div>
         <div class="chat-logs"></div>
       </div>
       <div class="chat-input">
-        <form>
-          <input type="text" id="chat-input" placeholder="Send a message..."/>
+        <form id="chat-form">
+          <input type="text" id="chat-input" placeholder="Send a message..." autocomplete="off"/>
           <button type="submit" class="chat-submit" id="chat-submit"><i class="material-icons">send</i></button>
         </form>
       </div>
@@ -74,7 +71,7 @@
 
   <script>
     // ------- Quill setup --------
-    var initialHtml =  JSON.stringify(typeof contentOfPost !== 'undefined' ? contentOfPost : '') ;
+    var initialHtml = <%- JSON.stringify(typeof contentOfPost !== 'undefined' ? contentOfPost : '') %>;
 
     var quill = new Quill('#editor', {
       theme: 'snow',
@@ -102,35 +99,30 @@
       document.getElementById('contentOfPost').value = quill.root.innerHTML;
     });
 
-    // ------- "Ask AI" typing dots feedback (scoped & cleaned up) -------
+    // ------- "Ask AI" typing dots feedback (kept as-is) -------
     var myButton = document.getElementById('myButton');
     var titleInput = document.getElementById('title');
     var promptInput = document.getElementById('prompt');
-    var dotsCount = 0;
-    var message = 'AI typing';
     var aiInterval = null;
 
     myButton.addEventListener('click', function () {
-      // Only animate if they’re actually clicking Ask AI submit
-      // and both fields are present
       if (titleInput.value && promptInput.value) {
         if (aiInterval) clearInterval(aiInterval);
+        var dots = 0;
         aiInterval = setInterval(function () {
-          dotsCount = (dotsCount + 1) % 4;
-          myButton.textContent = message + '.'.repeat(dotsCount);
+          dots = (dots + 1) % 4;
+          myButton.textContent = 'AI typing' + '.'.repeat(dots);
         }, 500);
       }
     });
 
     // Stop the animation on ANY form submission
-    document.querySelector('form').addEventListener('submit', function () {
-      if (aiInterval) {
-        clearInterval(aiInterval);
-        aiInterval = null;
-      }
+    form.addEventListener('submit', function () {
+      if (aiInterval) { clearInterval(aiInterval); aiInterval = null; }
     });
 
-    document.querySelector('form').addEventListener('submit', function () {
+    // Optional overlay from your snippet
+    form.addEventListener('submit', function () {
       const overlay = document.createElement('div');
       overlay.style.position = 'fixed';
       overlay.style.top = 0; overlay.style.right = 0; overlay.style.bottom = 0; overlay.style.left = 0;
@@ -138,162 +130,210 @@
       document.body.appendChild(overlay);
     });
 
-    // ------- Chatbox logic (unchanged except scoping) -------
-    $(function () {
-      var INDEX = 0;
+    // ------------- CHATBOT (single, consolidated logic) -------------
+    (function () {
+      let INDEX = 0;
+      let greeted = false;
 
-      $("#chat-submit").click(function (e) {
-        e.preventDefault();
-        var msg = $("#chat-input").val();
-        if (msg.trim() === '') return false;
-        generate_message(msg, 'self');
-        setTimeout(function () {
-          // Echo back for now (replace with your GPT call)
-          generate_message(msg, 'user');
-        }, 600);
-      });
+      const $chatBox   = $('.chat-box');
+      const $chatLogs  = $('.chat-logs');
+      const $chatForm  = $('#chat-form');
+      const $chatInput = $('#chat-input');
+      const $chatBtn   = $('#chat-submit');
+      const $openBtn   = $('#chat-circle');
+      const $closeBtn  = $('.chat-box-toggle');
 
-      function generate_message(msg, type) {
+      function escapeHtml(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+      function addMessage(text, type, withCopy = false) {
         INDEX++;
-        var str = "";
-        str += "<div id='cm-msg-" + INDEX + "' class=\"chat-msg " + type + "\">";
-        str += "  <span class=\"msg-avatar\">";
-        str += "    <img src=\"https://image.crisp.im/avatar/operator/196af8cc-f6ad-4ef7-afd1-c45d5231387c/240/?1483361727745\">";
-        str += "  </span>";
-        str += "  <div class=\"cm-msg-text\">" + msg + "</div>";
-        str += "</div>";
-        $(".chat-logs").append(str);
-        $("#cm-msg-" + INDEX).hide().fadeIn(300);
-        if (type === 'self') $("#chat-input").val('');
-        $(".chat-logs").stop().animate({ scrollTop: $(".chat-logs")[0].scrollHeight }, 500);
+        const copyBtn = withCopy
+          ? `<button class="copy-btn" data-copy="${encodeURIComponent(text)}" title="Copy">Copy</button>`
+          : '';
+        const html = `
+          <div id="cm-msg-${INDEX}" class="chat-msg ${type}">
+            <span class="msg-avatar">
+              <img src="https://image.crisp.im/avatar/operator/196af8cc-f6ad-4ef7-afd1-c45d5231387c/240/?1483361727745" alt="avatar">
+            </span>
+            <div class="cm-msg-text">${escapeHtml(text).replace(/\n/g,'<br>')}</div>
+            ${copyBtn}
+          </div>`;
+        $chatLogs.append(html);
+        $(`#cm-msg-${INDEX}`).hide().fadeIn(150);
+        $chatLogs.stop().animate({ scrollTop: $chatLogs[0].scrollHeight }, 250);
       }
 
-      $("#chat-circle").click(function () {
-        $("#chat-circle").toggle('scale');
-        $(".chat-box").toggle('scale');
+      function setLoading(btn, on) {
+        if (!btn) return;
+        if (on) {
+          let dots = 0;
+          if (btn._timer) clearInterval(btn._timer);
+          btn._timer = setInterval(() => {
+            dots = (dots + 1) % 4;
+            btn.innerHTML = `<i class="material-icons">send</i> ${'.'.repeat(dots)}`;
+          }, 500);
+          btn.disabled = true;
+        } else {
+          if (btn._timer) clearInterval(btn._timer);
+          btn._timer = null;
+          btn.innerHTML = `<i class="material-icons">send</i>`;
+          btn.disabled = false;
+        }
+      }
+
+      // Open chat: ONLY one handler; prevent bubbling
+      $openBtn.on('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $openBtn.hide();
+        $chatBox.addClass('open').attr('aria-hidden', 'false');
+        if (!greeted) {
+          addMessage("Hi! I’m your writing helper. Ask me anything or tell me what to draft. ✍️", 'user', true);
+          greeted = true;
+        }
       });
 
-      $(".chat-box-toggle").click(function () {
-        $("#chat-circle").toggle('scale');
-        $(".chat-box").toggle('scale');
+      // Close chat
+      $closeBtn.on('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $chatBox.removeClass('open').attr('aria-hidden', 'true');
+        $openBtn.show();
       });
-    });
-    // ------- Chat bubble: real AI via /compose -------
-  $(function () {
-    let INDEX = 0;
-    let greeted = false;
 
-    // Helpers
-    function escapeHtml(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-    function addMessage(text, type, withCopy = false) {
-      INDEX++;
-      const copyBtn = withCopy
-        ? `<button class="copy-btn" data-copy="${encodeURIComponent(text)}" title="Copy">Copy</button>`
-        : '';
-      const html = `
-        <div id="cm-msg-${INDEX}" class="chat-msg ${type}">
-          <span class="msg-avatar">
-            <img src="https://image.crisp.im/avatar/operator/196af8cc-f6ad-4ef7-afd1-c45d5231387c/240/?1483361727745">
-          </span>
-          <div class="cm-msg-text">${escapeHtml(text).replace(/\n/g,'<br>')}</div>
-          ${copyBtn}
-        </div>`;
-      $(".chat-logs").append(html);
-      $(`#cm-msg-${INDEX}`).hide().fadeIn(200);
-      $(".chat-logs").stop().animate({ scrollTop: $(".chat-logs")[0].scrollHeight }, 300);
-    }
-    function setLoading(btn, on) {
-      if (!btn) return;
-      if (on) {
-        let dots = 0;
-        btn.dataset._timer && clearInterval(btn.dataset._timer);
-        btn.dataset._timer = setInterval(() => {
-          dots = (dots + 1) % 4;
-          btn.innerHTML = `<i class="material-icons">send</i> ${'.'.repeat(dots)}`;
-        }, 500);
-        btn.disabled = true;
-      } else {
-        btn.dataset._timer && clearInterval(btn.dataset._timer);
-        btn.dataset._timer = '';
-        btn.innerHTML = `<i class="material-icons">send</i>`;
-        btn.disabled = false;
-      }
-    }
+      // Prevent clicks inside the chat from closing it (if you later add page-level handlers)
+      $chatBox.on('click', function (e) { e.stopPropagation(); });
 
-    // Open/close chat
-    $("#chat-circle").click(function () {
-      $("#chat-circle").toggle('scale');
-      $(".chat-box").toggle('scale');
-      if (!greeted) {
-        addMessage("Hi! I’m your writing helper. Ask me anything or tell me what to draft. ✍️", 'user', true);
-        greeted = true;
-      }
-    });
-    $(".chat-box-toggle").click(function () {
-      $("#chat-circle").toggle('scale');
-      $(".chat-box").toggle('scale');
-    });
+      // Submit chat → call /compose with action=generate_ai
+      $chatForm.on('submit', async function (e) {
+        e.preventDefault();
+        const msg = $chatInput.val();
+        if (!msg.trim()) return;
 
-    // Submit chat -> call /compose with action=generate_ai
-    $("#chat-submit").off('click').on('click', async function (e) {
-      e.preventDefault();
-      const input = $("#chat-input");
-      const msg = input.val();
-      if (!msg.trim()) return;
+        addMessage(msg, 'self');
+        $chatInput.val('');
 
-      addMessage(msg, 'self');
-      input.val('');
+        const btn = $chatBtn.get(0);
+        setLoading(btn, true);
 
-      const btn = document.getElementById('chat-submit');
-      setLoading(btn, true);
+        try {
+          const resp = await fetch('/compose', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'generate_ai',
+              Prompt: msg,
+              contextHtml: (window.quill ? quill.root.innerHTML : '')
+            })
+          });
+          const data = await resp.json().catch(() => ({}));
+          const aiText = (resp.ok && data.ok && data.reply) ? data.reply : (data.error || 'Sorry, I couldn’t generate a response.');
+          addMessage(aiText, 'user', true);
+        } catch (err) {
+          console.error(err);
+          addMessage('Oops—AI request failed. Try again in a moment.', 'user', true);
+        } finally {
+          setLoading(btn, false);
+        }
+      });
 
-      try {
-        const resp = await fetch('/compose', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            action: 'generate_ai',
-            Prompt: msg,
-            contextHtml: (window.quill ? quill.root.innerHTML : '')
-          })
+      // Copy buttons inside chat
+      $(document).on('click', '.copy-btn', function () {
+        const txt = decodeURIComponent($(this).data('copy') || '');
+        navigator.clipboard.writeText(txt).then(() => {
+          $(this).text('Copied!');
+          setTimeout(() => $(this).text('Copy'), 1200);
         });
-        const data = await resp.json().catch(() => ({}));
-        const aiText = (resp.ok && data.ok && data.reply) ? data.reply : (data.error || 'Sorry, I couldn’t generate a response.');
-        addMessage(aiText, 'user', true);
-      } catch (err) {
-        console.error(err);
-        addMessage('Oops—AI request failed. Try again in a moment.', 'user', true);
-      } finally {
-        setLoading(btn, false);
-      }
-    });
-
-    // Copy buttons inside chat
-    $(document).on('click', '.copy-btn', function () {
-      const txt = decodeURIComponent($(this).data('copy') || '');
-      navigator.clipboard.writeText(txt).then(() => {
-        $(this).text('Copied!');
-        setTimeout(() => $(this).text('Copy'), 1200);
       });
-    });
-  });
+    })();
+  </script>
 
-  // Optional: style for the small Copy buttons in chat
-</script>
-<style>
-  .chat-msg .copy-btn {
-    margin-top: 6px;
-    border: none;
-    font-size: 12px;
-    padding: 4px 8px;
-    border-radius: 6px;
-    cursor: pointer;
-    background: #eaeaea;
-  }
-  @media (prefers-color-scheme: dark) {
-    .chat-msg .copy-btn { background: #3a3a3a; color: #fff; }
-  }
-</style>
+  <!-- Styles: chat open/close without jQuery UI -->
+  <style>
+    /* Basic chat visibility (no jQuery UI needed) */
+    .chat-box { display: none; }
+    .chat-box.open { display: block; }
+
+    /* Optional: nicer transitions */
+    .chat-box {
+      transform-origin: bottom right;
+      transform: scale(0.95);
+      opacity: 0;
+      transition: transform .12s ease, opacity .12s ease;
+      position: fixed;
+      right: 16px;
+      bottom: 84px; /* leave room for the circle button */
+      width: min(340px, 90vw);
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 12px 40px rgba(0,0,0,.25);
+      z-index: 1000;
+    }
+    .chat-box.open {
+      opacity: 1;
+      transform: scale(1);
+    }
+    #chat-circle {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      box-shadow: 0 10px 24px rgba(0,0,0,.25);
+      z-index: 1001;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #007bff;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+    .chat-box-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 12px; border-bottom: 1px solid #e5e5e5; font-weight: 600;
+    }
+    .chat-box-body { max-height: 50vh; overflow: auto; }
+    .chat-logs { padding: 10px; }
+    .chat-msg { display: flex; gap: 8px; margin: 8px 0; }
+    .chat-msg.self { flex-direction: row-reverse; }
+    .chat-msg .msg-avatar img { width: 28px; height: 28px; border-radius: 50%; }
+    .chat-msg .cm-msg-text {
+      background: #f3f3f3; padding: 8px 10px; border-radius: 8px; max-width: 75%;
+    }
+    .chat-msg.self .cm-msg-text { background: #dfe9ff; }
+    .chat-input { border-top: 1px solid #e5e5e5; padding: 8px; }
+    .chat-input form { display: flex; gap: 8px; }
+    .chat-input input { flex: 1; }
+
+    .chat-msg .copy-btn {
+      margin-top: 6px;
+      border: none;
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      background: #eaeaea;
+      align-self: flex-end;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .chat-box { background: #1f1f1f; color: #fff; }
+      .chat-box-header { border-bottom-color: #333; }
+      .chat-msg .cm-msg-text { background: #2b2b2b; }
+      .chat-msg.self .cm-msg-text { background: #1f3a66; }
+      .chat-msg .copy-btn { background: #3a3a3a; color: #fff; }
+      #chat-circle { background: #3b82f6; }
+      .ql-toolbar.ql-snow { background: #2a2a2a; border-color: #444; color: #fff; }
+      .ql-container.ql-snow { background: #2a2a2a; border-color: #444; color: #fff; }
+      .ql-picker, .ql-stroke { color: #fff; stroke: #fff; }
+      .ql-editor { color: #fff; }
+    }
+
+    /* Make Quill look like a Bootstrap control */
+    .ql-container.ql-snow { border-radius: 4px; }
+  </style>
 </body>
 
 <%- include("partials/footer") %>
