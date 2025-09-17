@@ -9,21 +9,38 @@ const User = require('./models/user');
 const Note = require('./models/note'); // Import the User model or replace it with your own
 const note = require('./models/note');
 const bcrypt = require('bcryptjs');
-
+const MongoStore = require('connect-mongo');
 const saltRounds = 10;
 const app = express();
+const path = require('path');
 
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Database connected successfully'))
   .catch(err => console.log(err));
 
 app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));    
+app.use(express.static(path.join(__dirname, 'public')));
+app.set('trust proxy', 1);
+
 app.use(session({
-  secret: 'peopleeat8Apples',
+  name: 'sid',
+  secret: process.env.SESSION_SECRET,                 
   resave: false,
-  saveUninitialized: true,
-  cookie: { secure: false } // Note: A secure cookie requires an HTTPS connection
-}))
+  saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGODB_URI,
+    collectionName: 'sessions',
+    ttl: 60 * 60 * 24 * 7, // 7 days
+  }),
+  cookie: {
+    secure: true,           
+    httpOnly: true,
+    sameSite: 'lax',
+    maxAge: 1000 * 60 * 60 * 24 * 7,
+  },
+}));
+
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
