@@ -207,59 +207,6 @@
     0%, 100% { opacity: .3; transform: translateY(0); }
     50%      { opacity: 1;  transform: translateY(-2px); }
   }
-  /* Make the input bar full width with the send button inside it */
-.chat-input{
-  padding: 12px 16px;
-  border-top: 1px solid var(--chat-border);
-  background: var(--chat-bg);
-}
-
-#chat-form{ margin: 0; }
-
-.input-wrap{
-  position: relative;
-  width: 100%;
-}
-
-#chat-input{
-  width: 100%;
-  border: 1px solid var(--chat-border);
-  background: var(--chat-muted);
-  color: var(--chat-text);
-  border-radius: 12px;
-  font-size: 15.5px;
-  padding: 14px 56px 14px 16px;  /* extra right padding for the button */
-  outline: none;
-  box-sizing: border-box;
-}
-
-#chat-send{
-  position: absolute;
-  top: 50%;
-  right: 8px;
-  transform: translateY(-50%);
-  border: none;
-  background: var(--chat-brand);
-  color: #fff;
-  width: 44px;
-  height: 36px;
-  border-radius: 10px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 16px rgba(11,95,255,.25);
-  cursor: pointer;
-}
-
-#chat-send .material-icons{ font-size: 20px; }
-
-/* Loading dots (kept from previous version) */
-.dots{ display:inline-flex; gap:4px; align-items:center; justify-content:center; }
-.dot{ width:6px; height:6px; border-radius:50%; background:#fff; opacity:.3; animation:pulse 1s infinite; }
-.dot:nth-child(2){ animation-delay:.15s; }
-.dot:nth-child(3){ animation-delay:.30s; }
-@keyframes pulse{ 0%,100%{opacity:.3;transform:translateY(0)} 50%{opacity:1;transform:translateY(-2px)} }
-
 </style>
 
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -299,18 +246,11 @@
     </header>
     <main id="chat-body" class="chat-body"></main>
     <footer class="chat-input">
-  <form id="chat-form">
-    <div class="input-wrap">
-      <input type="text" id="chat-input"
-             placeholder="Ask for an outline, rewrite, bullets… (Tab accepts last suggestion)"
-             autocomplete="off"/>
-      <button id="chat-send" type="submit" aria-label="Send">
-        <span class="material-icons">send</span>
-      </button>
-    </div>
-  </form>
-</footer>
-
+      <form id="chat-form">
+        <input type="text" id="chat-input" placeholder="Ask for an outline, rewrite, bullets… (Tab accepts last suggestion)" autocomplete="off"/>
+        <button id="chat-send" type="submit" aria-label="Send"><span class="material-icons">send</span></button>
+      </form>
+    </footer>
   </aside>
 
   <!-- jQuery & Bootstrap -->
