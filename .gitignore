@@ -1,0 +1,93 @@
+# Dependencies
+node_modules/
+jspm_packages/
+bower_components/
+
+# Build outputs
+dist/
+build/
+out/
+.next/
+.nuxt/
+.vite/
+.turbo/
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.development.local
+.env.test
+.env.test.local
+.env.production
+.env.production.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Cache
+.npm/
+.eslintcache
+.stylelintcache
+.parcel-cache/
+.cache/
+.sass-cache/
+
+# Testing
+coverage/
+.nyc_output/
+cypress/videos/
+cypress/screenshots/
+
+# IDEs & editors
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.swp
+.project
+.classpath
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Package manager locks (keep only the one you use)
+# yarn.lock
+# package-lock.json
+# pnpm-lock.yaml
+
+# Serverless
+.serverless/
+
+# Terraform
+*.tfstate
+*.tfstate.backup
+.terraform/
+
+# Misc
+*.tgz
+*.tar.gz
+.yarn-integrity
+.node_repl_history
